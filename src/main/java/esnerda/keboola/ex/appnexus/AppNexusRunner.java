@@ -161,7 +161,7 @@ public class AppNexusRunner extends ComponentRunner {
 					ClickTrackersFeedBulkRequest.class);
 
 			List<ReportRequestChunk<ClickTrackersFeedBulkRequest>> reqs = builder.buildAdRequestChunks(sinceInst, LocalDateTime.now(),
-					Arrays.asList(config.getNetworkAnalyticsPars().getDimensions().toArray(new String[0])));
+					Arrays.asList(config.getClickTrackersPars().getDimensions().toArray(new String[0])));
 
 			for (ReportRequestChunk chunk : reqs) {
 				Map<String, ReportRequestWrapper> resJobs = new HashMap<>();
