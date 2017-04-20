@@ -1,0 +1,38 @@
+{
+    "storage": {
+        "input": {
+            "tables": [],
+            "files": []
+        },
+        "output": {
+            "tables": [],
+            "files": []
+        }
+    },
+    "parameters":{
+  "userName": "name",
+  "#password": "pass!",
+  "endpointUrl": "https://api.appnexus.com",
+  "networkAnalyticsPars": {
+  "dimensions":["hour", "day", "month", "advertiser_currency", "advertiser_id",
+			"booked_revenue_adv_curr", "buyer_member_id", "clicks", "creative_id", "geo_country", "imps", "imp_type",
+			"insertion_order_id", "line_item_id", "media_cost", "media_type", "pixel_id", "placement_id",
+			"post_click_convs", "post_view_convs", "ppm", "profit", "publisher_currency", "publisher_id", "pub_rule_id",
+			"seller_member_id", "seller_type", "site_id", "size", "total_convs", "total_network_rpm",
+			"total_publisher_rpm" ],
+        "ids":[]
+  },
+    "clickTrackersPars":{
+    "dimensions":[ "hour", "day", "month", "datetime", "advertiser_id", "auction_id", "line_item_id",
+			"insertion_order_id", "member_id", "pricing_type", "publisher_id", "site_domain",
+			"tag_id", "tracker_id", "user_id"],
+        "ids":[]
+  },
+  "datasets" : [
+  "Advertiser", 
+  "Brand", "Campaign", "Category", "Creative", "InsertionOrder", "Label", "LineItem", "MediaType", "Placement", "Publisher", "Segment", "Site"],
+  "incremental": 1,
+  "since": null
+},
+    "image_parameters": []
+}

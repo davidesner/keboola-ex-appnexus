@@ -1,0 +1,443 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"title": "AppNexus extractor config",
+	"type": "object",
+	"properties": {
+		"userName": {
+			"propertyOrder": 1000,
+			"title": "User Name",
+			"type": "string",
+			"description": "AppNexus user name"
+		},
+		"#password": {
+			"propertyOrder": 3000,
+			"title": "Password",
+			"type": "string",
+			"description": "IcePortal password"
+		},
+		"endpointUrl": {
+			"propertyOrder": 4000,
+			"title": "Endpoint URL",
+			"type": "string",
+			"description": "AppNexus API Endpoint URL"
+		},
+		"networkAnalyticsPars": {
+			"propertyOrder": 5000,
+			"title": "Network Analytics report parameters",
+			"type": [
+				"null",
+				"object"
+			],
+			"description": "Network Analytics report parameters",
+			"properties": {
+				"dimensions": {
+					"type": "array",
+					"format": "checkbox",
+					"uniqueItems": true,
+					"title": "Dimensions",
+					"description": "List of dimensions to use. Resulting report will be sliced according to dimensions specified.",
+					"items": {
+						"type": "string",
+						"enum": [
+							"hour",
+							"day",
+							"month",
+							"advertiser_currency",
+							"advertiser_id",
+							"booked_revenue_adv_curr",
+							"buyer_member_id",
+							"clicks",
+							"creative_id",
+							"geo_country",
+							"imps",
+							"imp_type",
+							"insertion_order_id",
+							"line_item_id",
+							"media_cost",
+							"media_type",
+							"pixel_id",
+							"placement_id",
+							"post_click_convs",
+							"post_view_convs",
+							"ppm",
+							"profit",
+							"publisher_currency",
+							"publisher_id",
+							"pub_rule_id",
+							"seller_member_id",
+							"seller_type",
+							"site_id",
+							"size",
+							"total_convs",
+							"total_network_rpm",
+							"total_publisher_rpm"
+						],
+						"default": [
+							"hour",
+							"day",
+							"month",
+							"advertiser_currency",
+							"advertiser_id",
+							"booked_revenue_adv_curr",
+							"buyer_member_id",
+							"clicks",
+							"creative_id",
+							"geo_country",
+							"imps",
+							"imp_type",
+							"insertion_order_id",
+							"line_item_id",
+							"media_cost",
+							"media_type",
+							"pixel_id",
+							"placement_id",
+							"post_click_convs",
+							"post_view_convs",
+							"ppm",
+							"profit",
+							"publisher_currency",
+							"publisher_id",
+							"pub_rule_id",
+							"seller_member_id",
+							"seller_type",
+							"site_id",
+							"size",
+							"total_convs",
+							"total_network_rpm",
+							"total_publisher_rpm"
+						],
+						"options": {
+							"enum_titles": [
+								"hour",
+								"day",
+								"month",
+								"advertiser_currency",
+								"advertiser_id",
+								"booked_revenue_adv_curr",
+								"buyer_member_id",
+								"clicks",
+								"creative_id",
+								"geo_country",
+								"imps",
+								"imp_type",
+								"insertion_order_id",
+								"line_item_id",
+								"media_cost",
+								"media_type",
+								"pixel_id",
+								"placement_id",
+								"post_click_convs",
+								"post_view_convs",
+								"ppm",
+								"profit",
+								"publisher_currency",
+								"publisher_id",
+								"pub_rule_id",
+								"seller_member_id",
+								"seller_type",
+								"site_id",
+								"size",
+								"total_convs",
+								"total_network_rpm",
+								"total_publisher_rpm"
+							]
+						}
+					}
+				},
+				"ids": {
+					"type": "array",
+					"format": "checkbox",
+					"uniqueItems": true,
+					"title": "Id columns",
+					"description": "List of ID columns to use for incremental load. If none specified, the table will be loaded in 'full load' mode",
+					"items": {
+						"type": "string",
+						"enum": [
+							"hour",
+							"day",
+							"month",
+							"advertiser_currency",
+							"advertiser_id",
+							"booked_revenue_adv_curr",
+							"buyer_member_id",
+							"clicks",
+							"creative_id",
+							"geo_country",
+							"imps",
+							"imp_type",
+							"insertion_order_id",
+							"line_item_id",
+							"media_cost",
+							"media_type",
+							"pixel_id",
+							"placement_id",
+							"post_click_convs",
+							"post_view_convs",
+							"ppm",
+							"profit",
+							"publisher_currency",
+							"publisher_id",
+							"pub_rule_id",
+							"seller_member_id",
+							"seller_type",
+							"site_id",
+							"size",
+							"total_convs",
+							"total_network_rpm",
+							"total_publisher_rpm"
+						],
+						"default": null,
+						"options": {
+							"enum_titles": [
+								"hour",
+								"day",
+								"month",
+								"advertiser_currency",
+								"advertiser_id",
+								"booked_revenue_adv_curr",
+								"buyer_member_id",
+								"clicks",
+								"creative_id",
+								"geo_country",
+								"imps",
+								"imp_type",
+								"insertion_order_id",
+								"line_item_id",
+								"media_cost",
+								"media_type",
+								"pixel_id",
+								"placement_id",
+								"post_click_convs",
+								"post_view_convs",
+								"ppm",
+								"profit",
+								"publisher_currency",
+								"publisher_id",
+								"pub_rule_id",
+								"seller_member_id",
+								"seller_type",
+								"site_id",
+								"size",
+								"total_convs",
+								"total_network_rpm",
+								"total_publisher_rpm"
+							]
+						}
+					}
+				}
+			}
+		},
+		"clickTrackersPars": {
+			"propertyOrder": 6000,
+			"title": "Click Tracker report parameters",
+			"type": [
+				"null",
+				"object"
+			],
+			"description": "Click Tracker report parameters",
+			"properties": {
+				"dimensions": {
+					"type": "array",
+					"format": "checkbox",
+					"uniqueItems": true,
+					"title": "Dimensions",
+					"description": "List of dimensions to use. Resulting report will be sliced according to dimensions specified.",
+					"items": {
+						"type": "string",
+						"enum": [
+							"hour",
+							"day",
+							"month",
+							"datetime",
+							"advertiser_id",
+							"auction_id",
+							"line_item_id",
+							"insertion_order_id",
+							"member_id",
+							"pricing_type",
+							"publisher_id",
+							"site_domain",
+							"tag_id",
+							"tracker_id",
+							"user_id"
+						],
+						"default": [
+							"hour",
+							"day",
+							"month",
+							"datetime",
+							"advertiser_id",
+							"auction_id",
+							"line_item_id",
+							"insertion_order_id",
+							"member_id",
+							"pricing_type",
+							"publisher_id",
+							"site_domain",
+							"tag_id",
+							"tracker_id",
+							"user_id"
+						],
+						"options": {
+							"enum_titles": [
+								"hour",
+								"day",
+								"month",
+								"datetime",
+								"advertiser_id",
+								"auction_id",
+								"line_item_id",
+								"insertion_order_id",
+								"member_id",
+								"pricing_type",
+								"publisher_id",
+								"site_domain",
+								"tag_id",
+								"tracker_id",
+								"user_id"
+							]
+						}
+					}
+				},
+				"ids": {
+					"type": "array",
+					"format": "checkbox",
+					"uniqueItems": true,
+					"title": "Id columns",
+					"description": "List of ID columns to use for incremental load. If none specified, the table will be loaded in 'full load' mode",
+					"items": {
+						"type": "string",
+						"enum": [
+							"hour",
+							"day",
+							"month",
+							"datetime",
+							"advertiser_id",
+							"auction_id",
+							"line_item_id",
+							"insertion_order_id",
+							"member_id",
+							"pricing_type",
+							"publisher_id",
+							"site_domain",
+							"tag_id",
+							"tracker_id",
+							"user_id"
+						],
+						"default": null,
+						"options": {
+							"enum_titles": [
+								"hour",
+								"day",
+								"month",
+								"datetime",
+								"advertiser_id",
+								"auction_id",
+								"line_item_id",
+								"insertion_order_id",
+								"member_id",
+								"pricing_type",
+								"publisher_id",
+								"site_domain",
+								"tag_id",
+								"tracker_id",
+								"user_id"
+							]
+						}
+					}
+				}
+			}
+		},
+		"datasets": {
+			"propertyOrder": 7000,
+			"type": "array",
+			"format": "checkbox",
+			"uniqueItems": true,
+			"title": "Entity datasets",
+			"description": "Entity datasets to download",
+			"items": {
+				"type": "string",
+				"enum": [
+					"Advertiser",
+					"Brand",
+					"Campaign",
+					"Category",
+					"Creative",
+					"InsertionOrder",
+					"Label",
+					"LineItem",
+					"MediaType",
+					"Placement",
+					"Publisher",
+					"Segment",
+					"Site"
+				],
+				"default": [
+					"Advertiser",
+					"Brand",
+					"Campaign",
+					"Category",
+					"Creative",
+					"InsertionOrder",
+					"Label",
+					"LineItem",
+					"MediaType",
+					"Placement",
+					"Publisher",
+					"Segment",
+					"Site"
+				],
+				"options": {
+					"enum_titles": [
+						"Advertiser",
+						"Brand",
+						"Campaign",
+						"Category",
+						"Creative",
+						"InsertionOrder",
+						"Label",
+						"LineItem",
+						"MediaType",
+						"Placement",
+						"Publisher",
+						"Segment",
+						"Site"
+					]
+				}
+			}
+		},
+		"incremental": {
+			"propertyOrder": 8000,
+			"title": "Storage upload mode",
+			"description": "Incremental upload will append data to existing tables. Full upload will replace the contents of target table.",
+			"type": "number",
+			"enum": [
+				0,
+				1
+			],
+			"default": 1,
+			"options": {
+				"enum_titles": [
+					"Full",
+					"Incremental"
+				]
+			}
+		},
+		"since": {
+			"propertyOrder": 9000,
+			"title": "Changed since",
+			"description": "Loads data changed since. Date in format yyyy-mm-dd",
+			"type": "string"
+		}
+	},
+	"required": [
+		"userName",
+		"#password",
+		"endpointUrl",
+		"networkAnalyticsPars",
+		"clickTrackersPars",
+		"incremental",
+		"since",
+		"datasets"
+	]
+}
