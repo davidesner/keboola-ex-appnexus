@@ -19,7 +19,7 @@ import com.google.common.collect.Lists;
 public class ReportRequestBuilder<T extends ReportRequest> {
 
 	private static final int MAX_DAY_INTERVAL = 30;
-	private static final int MAX_WINDOW_SIZE = 24;
+	private static final int MAX_WINDOW_SIZE = 23;
 	private final Class<T> type;
 	
 	
