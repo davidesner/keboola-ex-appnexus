@@ -16,7 +16,7 @@ public class ClickTrackersFeedBulkRequest extends ReportRequest {
 		super(startDate, endDate, columns);
 	}
 
-	private static final String REPORT_TYPE = "clicktrackers_feed";
+	private static final String REPORT_TYPE = "clicktrackers";
 
 	public static final String[] COLUMNS = new String[] { "hour", "day", "month", "datetime", "advertiser_id", "auction_id", "line_item_id",
 			"insertion_order_id", "member_id", "pricing_type", "publisher_id", "site_domain",
