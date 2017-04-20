@@ -101,6 +101,9 @@ public class AppNexusRunner extends ComponentRunner {
 		LocalDateTime since = getSinceDate();
 
 		log.info("Retrieving entities...");
+		if(since != null){
+			log.info("Loading results since " + since.toString());
+		}
 		List<ResultFileMetadata> results = new ArrayList<>();
 		try {
 			results.addAll(writeAllEntities(since));
@@ -206,51 +209,69 @@ public class AppNexusRunner extends ComponentRunner {
 		try {
 			if (config.getDatasets().contains(Dataset.Advertiser.name())) {
 				log.info("Retrieving advetisers...");
+				advertiserWriter.initWriter(handler.getOutputTablesPath(), Advertiser.class);
 				result.addAll(advertiserWriter.writeAndRetrieveResuts(apiService.getAllAdvertisers(since)));
 			}
 			if (config.getDatasets().contains(Dataset.Brand.name())) {
 				log.info("Retrieving brands...");
+				brandWriter.initWriter(handler.getOutputTablesPath(), Brand.class);
 				result.addAll(brandWriter.writeAndRetrieveResuts(apiService.getAllBrands(since)));
 			}
 			if (config.getDatasets().contains(Dataset.Campaign.name())) {
 				log.info("Retrieving campaigns...");
+				campaignWriter.initWriter(handler.getOutputTablesPath(), null);
 				result.addAll(campaignWriter.writeAndRetrieveResuts(apiService.getAllCampaigns(since)));
 			}
 			if (config.getDatasets().contains(Dataset.LineItem.name())) {
 				log.info("Retrieving line items...");
+				lineItemWriter.initWriter(handler.getOutputTablesPath(), null);
 				result.addAll(lineItemWriter.writeAndRetrieveResuts(apiService.getAllLineItems(since)));
 			}
 			if (config.getDatasets().contains(Dataset.Category.name())) {
 				log.info("Retrieving categories...");
+				catWriter.initWriter(handler.getOutputTablesPath(), Category.class);
 				result.addAll(catWriter.writeAndRetrieveResuts(apiService.getAllCategories(since)));
 			}
 			if (config.getDatasets().contains(Dataset.Creative.name())) {
 				log.info("Retrieving creatives...");
+				crWriter.initWriter(handler.getOutputTablesPath(), Creative.class);
 				result.addAll(crWriter.writeAndRetrieveResuts(apiService.getAllCreatives(since)));
 			}
 			if (config.getDatasets().contains(Dataset.InsertionOrder.name())) {
 				log.info("Retrieving insertion orders...");
+				iOrderWriter.initWriter(handler.getOutputTablesPath(), InsertionOrder.class);
 				result.addAll(iOrderWriter.writeAndRetrieveResuts(apiService.getAllInsertionOrders(since)));
 			}
 			if (config.getDatasets().contains(Dataset.MediaType.name())) {
 				log.info("Retrieving media types...");
+				mediaTypeWriter.initWriter(handler.getOutputTablesPath(), MediaType.class);
 				result.addAll(mediaTypeWriter.writeAndRetrieveResuts(apiService.getAllMediaTypes(since)));
 			}
 			if (config.getDatasets().contains(Dataset.Placement.name())) {
 				log.info("Retrieving placements...");
+				placemetnWriter.initWriter(handler.getOutputTablesPath(), null);
 				result.addAll(placemetnWriter.writeAndRetrieveResuts(apiService.getAllPlacements(since)));
 			}
 			if (config.getDatasets().contains(Dataset.Publisher.name())) {
 				log.info("Retrieving publishers...");
+				publisherWriter.initWriter(handler.getOutputTablesPath(), null);
 				result.addAll(publisherWriter.writeAndRetrieveResuts(apiService.getAllPublishers(since)));
 			}
 			if (config.getDatasets().contains(Dataset.Segment.name())) {
 				log.info("Retrieving segments...");
+				segmentWriter.initWriter(handler.getOutputTablesPath(), Segment.class);
 				result.addAll(segmentWriter.writeAndRetrieveResuts(apiService.getAllSegments(since)));
 			}
 			if (config.getDatasets().contains(Dataset.Site.name())) {
 				log.info("Retrieving sites...");
+				siteWriter.initWriter(handler.getOutputTablesPath(), null);
 				result.addAll(siteWriter.writeAndRetrieveResuts(apiService.getAllSites(since)));
+			}
+			if (config.getDatasets().contains(Dataset.Label.name())) {
+				log.info("Retrieving labels...");
+				labelWriter.initWriter(handler.getOutputTablesPath(), Label.class);
+				labelWriter.initWriter(handler.getOutputTablesPath(), null);
+				result.addAll(labelWriter.writeAndRetrieveResuts(apiService.getAllLabels(since)));
 			}
 		} catch (NexusApiException e) {
 			log.error("Failed to retrieve entities! " + e.getMessage() + " errorId: " + e.getErrorId(),	e);
@@ -279,43 +300,19 @@ public class AppNexusRunner extends ComponentRunner {
 	@Override
 	protected void initWriters() throws Exception {
 		advertiserWriter = new DefaultBeanResultWriter<>("advertiser.csv", new String[] { "id" });
-		advertiserWriter.initWriter(handler.getOutputTablesPath(), Advertiser.class);
-
 		brandWriter = new DefaultBeanResultWriter<>("brand.csv", new String[] { "id" });
-		brandWriter.initWriter(handler.getOutputTablesPath(), Brand.class);
-
 		campaignWriter = new CampaignWriter();
-		campaignWriter.initWriter(handler.getOutputTablesPath(), null);
-
 		catWriter = new DefaultBeanResultWriter<>("category.csv", new String[] { "id" });
-		catWriter.initWriter(handler.getOutputTablesPath(), Category.class);
-
 		crWriter = new CreativeWriter();
-		crWriter.initWriter(handler.getOutputTablesPath(), Creative.class);
-
 		lineItemWriter = new LineItemWriter();
-		lineItemWriter.initWriter(handler.getOutputTablesPath(), null);
-
 		placemetnWriter = new PlacementWriter();
-		placemetnWriter.initWriter(handler.getOutputTablesPath(), null);
-
 		publisherWriter = new PublisherWriter();
-		publisherWriter.initWriter(handler.getOutputTablesPath(), null);
-
 		siteWriter = new SiteWriter();
-		siteWriter.initWriter(handler.getOutputTablesPath(), null);
-
 		iOrderWriter = new DefaultBeanResultWriter<>("insertionOrder.csv", new String[] { "id" });
-		iOrderWriter.initWriter(handler.getOutputTablesPath(), InsertionOrder.class);
-
 		labelWriter = new DefaultBeanResultWriter<>("label.csv", new String[] { "id" });
-		labelWriter.initWriter(handler.getOutputTablesPath(), Label.class);
-
 		mediaTypeWriter = new DefaultBeanResultWriter<>("mediaType.csv", new String[] { "id" });
-		mediaTypeWriter.initWriter(handler.getOutputTablesPath(), MediaType.class);
-
 		segmentWriter = new DefaultBeanResultWriter<>("segmetn.csv", new String[] { "id" });
-		segmentWriter.initWriter(handler.getOutputTablesPath(), Segment.class);
+
 	}
 
 	@Override
