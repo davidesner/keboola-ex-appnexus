@@ -178,6 +178,9 @@ public class AppNexusRunner extends ComponentRunner {
 			}
 		} catch (NexusApiException e) {
 			log.error("Failed to retrieve Click Trackers report! " + e.getMessage() + " errorId: " + e.getErrorId(), e);
+			if (!e.isTerminal()) {
+				System.exit(1);
+			}
 		}
 		return processReportFiles(resultReports, config.getClickTrackersPars().getIds().toArray(new String[0]));
 	}
@@ -270,11 +273,13 @@ public class AppNexusRunner extends ComponentRunner {
 			if (config.getDatasets().contains(Dataset.Label.name())) {
 				log.info("Retrieving labels...");
 				labelWriter.initWriter(handler.getOutputTablesPath(), Label.class);
-				labelWriter.initWriter(handler.getOutputTablesPath(), null);
 				result.addAll(labelWriter.writeAndRetrieveResuts(apiService.getAllLabels(since)));
 			}
 		} catch (NexusApiException e) {
 			log.error("Failed to retrieve entities! " + e.getMessage() + " errorId: " + e.getErrorId(),	e);
+			if (!e.isTerminal()) {
+				System.exit(1);
+			}
 		}
 		return result;
 	}

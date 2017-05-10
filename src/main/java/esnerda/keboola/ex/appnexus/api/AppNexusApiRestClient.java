@@ -60,7 +60,7 @@ public class AppNexusApiRestClient{
 		if (authResp.getResponse().getErrorId() == null) {
 			authToken = authResp.getResponse().getToken();
 		} else {
-			throw new NexusApiException(authResp.getResponse().getError(), authResp.getResponse().getErrorId());
+			throw new NexusApiException("Authentication failed! Invalid endpoint? Reason: " + authResp.getResponse().getError(), authResp.getResponse().getErrorId(), true);
 		}
 	}
 
@@ -141,14 +141,21 @@ public class AppNexusApiRestClient{
 	
 
 	public static class NexusApiException extends Exception {
-		
+
 		public enum ErrorID {
-			INTEGRITY, LIMIT, NOAUTH, NOAUTH_DISABLED, NOAUTH_EXPIRED;
+			INTEGRITY, LIMIT, NOAUTH, NOAUTH_DISABLED, NOAUTH_EXPIRED, SYNTAX;
 		}
 
 		private String errorId;
+		private boolean authenticationError;
 		
 		public NexusApiException(String message, String errorId) {
+			
+			super(message);
+			this.errorId = errorId;
+		}
+
+		public NexusApiException(String message, String errorId, boolean authenticationError) {
 			
 			super(message);
 			this.errorId = errorId;
@@ -157,6 +164,10 @@ public class AppNexusApiRestClient{
 		public boolean isRecoverable() {
 			return ErrorID.NOAUTH_EXPIRED.name().equals(errorId) || ErrorID.NOAUTH_EXPIRED.name().equals(errorId) ||
 					ErrorID.LIMIT.name().equals(errorId);
+		}
+
+		public boolean isTerminal() {
+			return authenticationError;
 		}
 
 		public String getErrorId() {

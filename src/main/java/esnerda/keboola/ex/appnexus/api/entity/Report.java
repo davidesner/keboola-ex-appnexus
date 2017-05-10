@@ -3,26 +3,12 @@ package esnerda.keboola.ex.appnexus.api.entity;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-    "id",
-    "name",
-    "created_on",
-    "cache_hit",
-    "fact_cache_hit",
-    "fact_cache_error",
-    "json_request",
-    "header_info",
-    "row_count",
-    "report_size",
-    "user_id",
-    "url",
-    "file"
-})
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Report {
 
     @JsonProperty("id")
