@@ -170,9 +170,7 @@ public class Report {
 
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder().append(id).append(name).append(createdOn).append(cacheHit).append(factCacheHit)
-				.append(factCacheError).append(jsonRequest).append(headerInfo).append(rowCount).append(reportSize)
-				.append(userId).append(url).append(file).toHashCode();
+		return new HashCodeBuilder().append(id).append(userId).append(url).toHashCode();
 	}
 
 	@Override

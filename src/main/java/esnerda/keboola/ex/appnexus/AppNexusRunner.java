@@ -96,7 +96,7 @@ public class AppNexusRunner extends ComponentRunner {
 	@Override
 	protected void run(){
 
-		LocalDateTime now = LocalDateTime.now();
+ 		LocalDateTime now = LocalDateTime.now();
 
 		LocalDateTime since = getSinceDate();
 
@@ -171,7 +171,9 @@ public class AppNexusRunner extends ComponentRunner {
 				resJobs.putAll(apiService.submitReportRequests(chunk.getRequestList()));
 				List<Report> reports = apiService.waitForAllJobsToFinish(new ArrayList<String>(resJobs.keySet()));
 				if (reports.size() != chunk.getRequestList().size()) {
-					log.error("Some reports were not generated and timed out!", null);
+					log.error(reports.size() + " reports out of " + chunk.getRequestList().size() + " were downloaded. "
+							+ (chunk.getRequestList().size() - reports.size())
+							+ " timed out and will be collected on next run.", null);
 				}
 				resultReports.addAll(apiService.downloadReports(reports,
 						handler.getOutputTablesPath() + File.separator + FILE_CLICK_TRACKERS));
