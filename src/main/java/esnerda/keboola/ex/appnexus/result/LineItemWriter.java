@@ -30,6 +30,7 @@ public class LineItemWriter implements IResultWriter<LineItem> {
 		// collect all results
 		results.addAll(lineItemWriter.closeAndRetrieveMetadata());
 		results.addAll(lnCampaignWriter.closeAndRetrieveMetadata());
+		results.addAll(lnInsertionorderWriter.closeAndRetrieveMetadata());
 
 		return results;
 	}
