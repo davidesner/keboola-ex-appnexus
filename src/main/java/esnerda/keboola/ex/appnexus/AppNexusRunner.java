@@ -168,7 +168,7 @@ public class AppNexusRunner extends ComponentRunner {
 			ReportRequestBuilder<ClickTrackersFeedBulkRequest> builder = new ReportRequestBuilder<ClickTrackersFeedBulkRequest>(
 					ClickTrackersFeedBulkRequest.class);
 			Set<String> columns = new HashSet<>();
-			columns.addAll(Arrays.asList(config.getNetworkAnalyticsPars().getDimensions().toArray(new String[0])));
+			columns.addAll(Arrays.asList(config.getClickTrackersPars().getDimensions().toArray(new String[0])));
 			columns.addAll(Arrays.asList(ClickTrackersFeedBulkRequest.METRIC_COLUMNS));
 			List<ReportRequestChunk<ClickTrackersFeedBulkRequest>> reqs = builder.buildAdRequestChunks(sinceInst,
 					LocalDateTime.now(), new ArrayList<>(columns));
