@@ -11,6 +11,7 @@ import java.io.InputStreamReader;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
@@ -52,13 +53,13 @@ public class CsvUtil {
 		} catch (IOException ex) {
 			throw ex;
 		} finally {
-			try {			
+			try {
 				fis.close();
 				in.close();
 				out.close();
 				fout.close();
 			} catch (Exception ex) {
-				//do nothing.
+				// do nothing.
 			}
 		}
 
@@ -72,6 +73,24 @@ public class CsvUtil {
 			return false;
 		} else {
 			return ((((char) character == '\n') || ((char) character == '\r')));
+		}
+	}
+
+	public static void deleteEmptyFiles(List<File> files) {
+		for (File f : files) {
+			try {
+				if (isFileEmpty(f)) {
+					f.delete();
+				}
+			} catch (IOException e) {
+				// do nothing, I really dont care here
+			}
+		}
+	}
+
+	public static boolean isFileEmpty(File f) throws IOException {
+		try (BufferedReader br = new BufferedReader(new FileReader(f))) {
+			return br.readLine() == null;
 		}
 	}
 
@@ -107,8 +126,8 @@ public class CsvUtil {
 		}
 	}
 
-	public static String[] readHeader(File csvFile, char separator, char quotechar, char escape,
-			boolean strictQuotes, boolean ignoreLeadingWhiteSpace) throws Exception {
+	public static String[] readHeader(File csvFile, char separator, char quotechar, char escape, boolean strictQuotes,
+			boolean ignoreLeadingWhiteSpace) throws Exception {
 		String[] headers = null;
 		try (FileReader freader = new FileReader(csvFile);
 				CSVReader csvreader = new CSVReader(freader, separator, quotechar, escape, 0, strictQuotes,
@@ -121,8 +140,6 @@ public class CsvUtil {
 		}
 		return headers;
 	}
-	
-	
 
 	/**
 	 * Validates the structure of the merged csv files.

@@ -212,6 +212,8 @@ public class AppNexusRunner extends ComponentRunner {
 		for (File r : reports) {
 			CsvUtil.removeHeaderFromCsv(r);
 		}
+		//in case some files did not contain any data
+		CsvUtil.deleteEmptyFiles(reports);
 		return Collections.singletonList(
 				new ResultFileMetadata(new File(reports.get(0).getParentFile().getAbsolutePath()), ids, headerCols));
 	}

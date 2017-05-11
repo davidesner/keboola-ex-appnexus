@@ -88,6 +88,8 @@ public class AppNexusApiService {
 	private static final String KEY_PATH_LOOKUP = "lookup";
 	private static final String KEY_SART_EL = "start_element";
 	private static final String KEY_EL_COUNT = "num_elements";
+	
+	private static final String FILE_PART_NAME = "part";
 	// wait between status check reqs
 	private static final long JOB_CHECK_WAIT_INTERVAL = 10000L;
 	// wait hour for jobs chunk to finish
@@ -509,18 +511,39 @@ public class AppNexusApiService {
 	}
 
 	public List<File> downloadReports(List<Report> reports, String path) throws NexusApiException, Exception {
-		int count = 0;
-		List<File> results = new ArrayList<>();
+		int count = getNextPartIndex(path);
+		List<File> results = new ArrayList<>();		
 		for (Report report : reports) {
 			try {
 				Response resp = apiClient.sendGetRequest(KEY_REPORT_DOWNLOAD, Collections.singletonMap(KEY_ID, report.getId()));
-				results.add(saveFile((InputStream) resp.getEntity(), path, "part" + count));
+				File res = saveFile((InputStream) resp.getEntity(), path, FILE_PART_NAME + count);				
+				results.add(res);
 				count++;
 			} catch (RatelimitExceededException e) {
 				// logger.warn(e.getMessage()
 			}
 		}
 		return results;
+	}
+
+	private int getNextPartIndex(String path) {
+		File folder = new File(path);
+		if (folder.exists()) {
+			File[] files = folder.listFiles();
+			return getLargestFileIndex(files) + 1;
+		}
+		return 0;
+	}
+
+	private int getLargestFileIndex(File[] files) {
+		int max = 0;
+		for (File f : files) {
+			int curr = Integer.valueOf(f.getName().substring(FILE_PART_NAME.length()));
+			if (curr > max) {
+				max = curr;
+			}
+		}
+		return max;
 	}
 
 	private File saveFile(InputStream is, String path, String name) throws IOException {
