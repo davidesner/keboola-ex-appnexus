@@ -27,6 +27,7 @@ public class PlacementWriter implements IResultWriter<Placement> {
 		// collect all results
 		results.addAll(placementWriter.closeAndRetrieveMetadata());
 		results.addAll(placementSegmWriter.closeAndRetrieveMetadata());
+		results.addAll(plMediaTypeWriter.closeAndRetrieveMetadata());
 
 		return results;
 	}

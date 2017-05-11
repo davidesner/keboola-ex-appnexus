@@ -30,6 +30,8 @@ public class CreativeWriter implements IResultWriter<Creative> {
 		// collect all results
 		results.addAll(creativeyWriter.closeAndRetrieveMetadata());
 		results.addAll(creativeSegmWriter.closeAndRetrieveMetadata());
+		results.addAll(creativeCBrandWriter.closeAndRetrieveMetadata());
+		results.addAll(creativeCCategoryWriter.closeAndRetrieveMetadata());
 
 		return results;
 	}
