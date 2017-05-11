@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
 
@@ -90,7 +92,8 @@ public class CsvUtil {
 
 	public static boolean isFileEmpty(File f) throws IOException {
 		try (BufferedReader br = new BufferedReader(new FileReader(f))) {
-			return br.readLine() == null;
+			String line = br.readLine();
+			return StringUtils.isBlank(line);
 		}
 	}
 
