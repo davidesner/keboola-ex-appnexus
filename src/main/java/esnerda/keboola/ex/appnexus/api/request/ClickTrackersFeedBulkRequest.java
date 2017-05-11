@@ -22,6 +22,9 @@ public class ClickTrackersFeedBulkRequest extends ReportRequest {
 			"insertion_order_id", "member_id", "pricing_type", "publisher_id", "site_domain",
 			"tag_id", "tracker_id", "user_id" };
 
+	public static final String[] METRIC_COLUMNS = new String[] { "commission_cpm", "commission_revshare",
+			"media_buy_cost", "media_buy_rev_share_pct", "revenue_value" };
+
 	@Override
 	public String getReportType() {
 		return REPORT_TYPE;

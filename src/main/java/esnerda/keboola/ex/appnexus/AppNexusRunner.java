@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import esnerda.keboola.components.KBCException;
 import esnerda.keboola.components.configuration.handler.ConfigHandlerBuilder;
@@ -134,8 +136,11 @@ public class AppNexusRunner extends ComponentRunner {
 			ReportRequestBuilder<NetworkAnalyticsFeedBulkRequest> builder = new ReportRequestBuilder<NetworkAnalyticsFeedBulkRequest>(
 					NetworkAnalyticsFeedBulkRequest.class);
 
-			List<ReportRequestChunk<NetworkAnalyticsFeedBulkRequest>> reqs = builder.buildAdRequestChunks(sinceInst, LocalDateTime.now(),
-					Arrays.asList(config.getNetworkAnalyticsPars().getDimensions().toArray(new String[0])));
+			Set<String> columns = new HashSet<>();
+			columns.addAll(Arrays.asList(config.getNetworkAnalyticsPars().getDimensions().toArray(new String[0])));
+			columns.addAll(Arrays.asList(NetworkAnalyticsFeedBulkRequest.METRIC_COLUMNS));
+			List<ReportRequestChunk<NetworkAnalyticsFeedBulkRequest>> reqs = builder.buildAdRequestChunks(sinceInst,
+					LocalDateTime.now(), new ArrayList(columns));
 
 			for (ReportRequestChunk chunk : reqs) {
 				Map<String, ReportRequestWrapper> resJobs = new HashMap<>();
@@ -162,9 +167,11 @@ public class AppNexusRunner extends ComponentRunner {
 		try {
 			ReportRequestBuilder<ClickTrackersFeedBulkRequest> builder = new ReportRequestBuilder<ClickTrackersFeedBulkRequest>(
 					ClickTrackersFeedBulkRequest.class);
-
-			List<ReportRequestChunk<ClickTrackersFeedBulkRequest>> reqs = builder.buildAdRequestChunks(sinceInst, LocalDateTime.now(),
-					Arrays.asList(config.getClickTrackersPars().getDimensions().toArray(new String[0])));
+			Set<String> columns = new HashSet<>();
+			columns.addAll(Arrays.asList(config.getNetworkAnalyticsPars().getDimensions().toArray(new String[0])));
+			columns.addAll(Arrays.asList(ClickTrackersFeedBulkRequest.METRIC_COLUMNS));
+			List<ReportRequestChunk<ClickTrackersFeedBulkRequest>> reqs = builder.buildAdRequestChunks(sinceInst,
+					LocalDateTime.now(), new ArrayList<>(columns));
 
 			for (ReportRequestChunk chunk : reqs) {
 				Map<String, ReportRequestWrapper> resJobs = new HashMap<>();
@@ -344,10 +351,12 @@ public class AppNexusRunner extends ComponentRunner {
 		} catch (KBCException e) {
 			handleException(e);
 		}
-		if (lastState == null || lastState.getLastRun() == null) {			
+		//temp fuj
+		/*if (lastState == null || lastState.getLastRun() == null) {			
 			return config.getSince() != null ? config.getSince().atStartOfDay() : null;
 		}
-		return lastState.getLastRun();
+		return lastState.getLastRun();*/
+		return config.getSince() != null ? config.getSince().atStartOfDay() : null;
 	}
 
 }
