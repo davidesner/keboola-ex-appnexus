@@ -36,6 +36,9 @@ public class AppNexusProperties extends IKBCParameters {
 	private ReportPars networkAnalyticsPars;
 	@JsonProperty("clickTrackersPars")
 	private ReportPars clickTrackersPars;
+	/* Standard Report params*/
+	@JsonProperty("networkAnalyticsStandardPars")
+	private ReportPars networkAnalyticsStandardPars;
 
 	@JsonProperty("incremental")
 	private Boolean incremental;
@@ -56,7 +59,8 @@ public class AppNexusProperties extends IKBCParameters {
 			@JsonProperty("networkAnalyticsPars") ReportPars networkAnalyticsPars,
 			@JsonProperty("clickTrackersPars") ReportPars clickTrackersPars,
 			@JsonProperty("incremental") Boolean incremental, @JsonProperty("since") LocalDate since,
-			@JsonProperty("datasets") List<String> datasets, @JsonProperty("debug") Boolean debug) {
+			@JsonProperty("datasets") List<String> datasets, @JsonProperty("debug") Boolean debug,
+			@JsonProperty("networkAnalyticsStandardPars") ReportPars networkAnalyticsStandardPars) {
 
 		this.debug = Optional.ofNullable(debug).orElse(false);
 		this.userName = userName;
@@ -64,6 +68,7 @@ public class AppNexusProperties extends IKBCParameters {
 		this.endpointUrl = endpointUrl;
 		this.networkAnalyticsPars = networkAnalyticsPars;
 		this.clickTrackersPars = clickTrackersPars;
+		this.networkAnalyticsStandardPars = networkAnalyticsStandardPars;
 		this.incremental = Optional.ofNullable(incremental).orElse(true);
 		this.since = since;
 		this.datasets = datasets;
@@ -159,5 +164,10 @@ public class AppNexusProperties extends IKBCParameters {
 	public Boolean getDebug() {
 		return debug;
 	}
+
+	public ReportPars getNetworkAnalyticsStandardPars() {
+		return networkAnalyticsStandardPars;
+	}
+	
 
 }

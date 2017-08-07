@@ -3,7 +3,6 @@ package esnerda.keboola.ex.appnexus;
 import java.io.File;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,12 +34,15 @@ import esnerda.keboola.ex.appnexus.api.entity.Report;
 import esnerda.keboola.ex.appnexus.api.entity.Segment;
 import esnerda.keboola.ex.appnexus.api.request.ClickTrackersFeedBulkRequest;
 import esnerda.keboola.ex.appnexus.api.request.NetworkAnalyticsFeedBulkRequest;
+import esnerda.keboola.ex.appnexus.api.request.NetworkAnalyticsFeedStandardReportReq;
+import esnerda.keboola.ex.appnexus.api.request.ReportRequest;
 import esnerda.keboola.ex.appnexus.api.request.ReportRequestBuilder;
 import esnerda.keboola.ex.appnexus.api.request.ReportRequestChunk;
 import esnerda.keboola.ex.appnexus.api.request.ReportRequestWrapper;
 import esnerda.keboola.ex.appnexus.config.AppNexusProperties;
 import esnerda.keboola.ex.appnexus.config.AppNexusProperties.Dataset;
 import esnerda.keboola.ex.appnexus.config.AppNexusState;
+import esnerda.keboola.ex.appnexus.config.ReportPars;
 import esnerda.keboola.ex.appnexus.result.CampaignWriter;
 import esnerda.keboola.ex.appnexus.result.CreativeWriter;
 import esnerda.keboola.ex.appnexus.result.LineItemWriter;
@@ -113,14 +115,21 @@ public class AppNexusRunner extends ComponentRunner {
 			// NetworkAnalytics Report
 			if (config.getNetworkAnalyticsPars() != null) {
 				log.info("Retrieving Network Analytics reports...");
-				results.addAll(downloadNetworkAnalyticsReports(since));
+				results.addAll(downloadReports(since, config.getNetworkAnalyticsPars(), new NetworkAnalyticsFeedBulkRequest()));
 			}
 
 			// ClickTrackers Report
 			if (config.getClickTrackersPars() != null) {
 				log.info("Retrieving Click Trackers reports...");
-				results.addAll(downloadClickTrackersReports(since));
+				results.addAll(downloadReports(since, config.getClickTrackersPars(), new ClickTrackersFeedBulkRequest()));
 			}
+
+			// NetworkAnalyticsStd Report
+			if (config.getNetworkAnalyticsStandardPars() != null) {
+				log.info("Retrieving Standard Network Analytics  reports...");
+				results.addAll(downloadReports(since, config.getNetworkAnalyticsStandardPars(), new NetworkAnalyticsFeedStandardReportReq()));
+			}
+
 		} catch (Exception ex) {
 			handleException(new KBCException("Extraction failed!", 2, ex));
 		}
@@ -128,18 +137,18 @@ public class AppNexusRunner extends ComponentRunner {
 		finalize(results, new AppNexusState(now, null));
 		log.info("Extraction finished successfuly!");
 	}
-
-	private List<ResultFileMetadata> downloadNetworkAnalyticsReports(LocalDateTime since) throws Exception {
+	
+	private <T extends ReportRequest> List<ResultFileMetadata> downloadReports(LocalDateTime since, ReportPars params, T reportRq) throws Exception {
 		LocalDateTime sinceInst = since != null ? since : null;
 		List<File> resultReports = new ArrayList<>();
 		try {
-			ReportRequestBuilder<NetworkAnalyticsFeedBulkRequest> builder = new ReportRequestBuilder<NetworkAnalyticsFeedBulkRequest>(
-					NetworkAnalyticsFeedBulkRequest.class);
+			ReportRequestBuilder<T> builder = new ReportRequestBuilder<T>(
+					(Class<T>) reportRq.getClass());
 
 			Set<String> columns = new HashSet<>();
-			columns.addAll(Arrays.asList(config.getNetworkAnalyticsPars().getDimensions().toArray(new String[0])));
-			columns.addAll(Arrays.asList(NetworkAnalyticsFeedBulkRequest.METRIC_COLUMNS));
-			List<ReportRequestChunk<NetworkAnalyticsFeedBulkRequest>> reqs = builder.buildAdRequestChunks(sinceInst,
+			columns.addAll(params.getDimensions());
+			columns.addAll(reportRq.getAllSupportedMetricColumns());
+			List<ReportRequestChunk<T>> reqs = builder.buildAdRequestChunks(sinceInst,
 					LocalDateTime.now(), new ArrayList(columns));
 
 			for (ReportRequestChunk chunk : reqs) {
@@ -153,45 +162,13 @@ public class AppNexusRunner extends ComponentRunner {
 							+ " timed out and will be collected on next run.", null);
 				}
 				resultReports.addAll(apiService.downloadReports(reports,
-						handler.getOutputTablesPath() + File.separator + FILE_NETWORK_ANALYTICS));
+						handler.getOutputTablesPath() + File.separator + reportRq.getReportType() + ".csv"));
 			}
 		} catch (NexusApiException e) {
-			log.error("Failed to retrieve Network analytics report! " + e.getMessage() + " errorId: " + e.getErrorId(),	e);
+			log.error("Failed to retrieve " + reportRq.getReportType() + " report! " + e.getMessage() + " errorId: " + e.getErrorId(),	e);
 		}
-		return processReportFiles(resultReports, config.getNetworkAnalyticsPars().getIds().toArray(new String[0]));
-	}
-
-	private List<ResultFileMetadata> downloadClickTrackersReports(LocalDateTime since) throws Exception {
-		LocalDateTime sinceInst = since != null ? since : null;
-		List<File> resultReports = new ArrayList<>();
-		try {
-			ReportRequestBuilder<ClickTrackersFeedBulkRequest> builder = new ReportRequestBuilder<ClickTrackersFeedBulkRequest>(
-					ClickTrackersFeedBulkRequest.class);
-			Set<String> columns = new HashSet<>();
-			columns.addAll(Arrays.asList(config.getClickTrackersPars().getDimensions().toArray(new String[0])));
-			columns.addAll(Arrays.asList(ClickTrackersFeedBulkRequest.METRIC_COLUMNS));
-			List<ReportRequestChunk<ClickTrackersFeedBulkRequest>> reqs = builder.buildAdRequestChunks(sinceInst,
-					LocalDateTime.now(), new ArrayList<>(columns));
-
-			for (ReportRequestChunk chunk : reqs) {
-				Map<String, ReportRequestWrapper> resJobs = new HashMap<>();
-				resJobs.putAll(apiService.submitReportRequests(chunk.getRequestList()));
-				List<Report> reports = apiService.waitForAllJobsToFinish(new ArrayList<String>(resJobs.keySet()));
-				if (reports.size() != chunk.getRequestList().size()) {
-					log.error(reports.size() + " reports out of " + chunk.getRequestList().size() + " were downloaded. "
-							+ (chunk.getRequestList().size() - reports.size())
-							+ " timed out and will be collected on next run.", null);
-				}
-				resultReports.addAll(apiService.downloadReports(reports,
-						handler.getOutputTablesPath() + File.separator + FILE_CLICK_TRACKERS));
-			}
-		} catch (NexusApiException e) {
-			log.error("Failed to retrieve Click Trackers report! " + e.getMessage() + " errorId: " + e.getErrorId(), e);
-			if (!e.isTerminal()) {
-				System.exit(1);
-			}
-		}
-		return processReportFiles(resultReports, config.getClickTrackersPars().getIds().toArray(new String[0]));
+		return processReportFiles(resultReports, params.getIds().toArray(new String[0]));
+		
 	}
 
 	/**

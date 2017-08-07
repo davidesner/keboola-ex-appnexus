@@ -48,6 +48,8 @@ public abstract class ReportRequest {
 	public abstract String getReportType();
 
 	@JsonIgnore
+	public abstract List<String> getAllSupportedMetricColumns();
+	
 	public abstract List<String> getAllSupportedColumns();
 
 	@JsonProperty("columns")

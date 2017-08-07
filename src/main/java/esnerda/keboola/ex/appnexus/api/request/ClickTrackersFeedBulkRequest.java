@@ -35,4 +35,9 @@ public class ClickTrackersFeedBulkRequest extends ReportRequest {
 		return Arrays.asList(COLUMNS);
 	}
 
+	@Override
+	public List<String> getAllSupportedMetricColumns() {
+		return Arrays.asList(METRIC_COLUMNS)	;
+	}
+
 }

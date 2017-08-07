@@ -47,5 +47,10 @@ public class NetworkAnalyticsFeedBulkRequest extends ReportRequest {
 	public List<String> getAllSupportedColumns() {
 		return Arrays.asList(COLUMNS);
 	}
+	
+	@Override
+	public List<String> getAllSupportedMetricColumns() {
+		return Arrays.asList(METRIC_COLUMNS);
+	}
 
 }
