@@ -19,14 +19,7 @@ public class NetworkAnalyticsFeedBulkRequest extends ReportRequest {
 
 	private static final String REPORT_TYPE = "network_analytics_feed";
 
-	public static final String[] COLUMNS = new String[] {  "hour", "day", "month", "advertiser_currency", "advertiser_id",
-			"booked_revenue_adv_curr", "buyer_member_id", "clicks", "creative_id", "geo_country", "imps", "imp_type",
-			"insertion_order_id", "line_item_id", "media_cost", "media_type", "pixel_id", "placement_id",
-			"post_click_convs", "post_view_convs", "ppm", "profit", "publisher_currency", "publisher_id", "pub_rule_id",
-			"seller_member_id", "seller_type", "site_id", "size", "total_convs", "total_network_rpm",
-			"total_publisher_rpm" };
-
-	public static final String[] METRIC_COLUMNS = new String[] { "hour", "day", "month", "adjustment_id",
+	public static final String[] COLUMNS = new String[] {  "hour", "day", "month", "adjustment_id",
 			"advertiser_id", "advertiser_code", "advertiser_currency", "bid_type", "buyer_member_id", "buyer_type",
 			"campaign_id", "creative_id", "creative_frequency_bucket", "creative_recency_bucket", "deal_id",
 			"entity_member_id", "external_inv_id", "geo_country", "height", "imp_type", "insertion_order_id",
@@ -34,6 +27,13 @@ public class NetworkAnalyticsFeedBulkRequest extends ReportRequest {
 			"media_subtype_id", "pixel_id", "placement_id", "placement_code", "publisher_id", "publisher_code",
 			"publisher_currency", "pub_rule_id", "pub_rule_code", "seller_member_id", "seller_type", "site_id",
 			"site_code", "size", "width", "revenue_type", "payment_type" };
+
+	public static final String[] METRIC_COLUMNS = new String[] { "booked_revenue", "booked_revenue_adv_curr", "clicks",
+			"commissions", "imps", "imps_viewed", "media_cost", "media_cost_pub_curr", "network_advertiser_rpm",
+			"network_advertiser_rpm_adv_curr", "network_resold_rpm", "post_click_convs", "post_click_revenue",
+			"post_view_convs", "post_view_revenue", "ppm", "profit", "publisher_rpm_publisher_currency",
+			"reseller_revenue", "revenue", "revenue_adv_curr", "rpm_adv_curr", "serving_fees", "total_convs",
+			"total_network_rpm", "total_publisher_rpm", "view_measured_imps", "view_measurement_rate", "view_rate" };
 	
 
 	
