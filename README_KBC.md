@@ -26,6 +26,12 @@ When the `Changed since` configuration parameter is not specified, all entities 
 
 
 ### Reports
+There are two types of reports available. Bulk and standard reports.
+  - **Bulk reports*, use them to retrieve data in regular manner. They offer data at most granular level and run faster then standard reports. However, they are limited to a 30 day history.
+  - **Standard reports* are suitable for one-off load of historical data, they allow to specify intervals larger than 30 days. However, if the interval is too long or the report is too large to compute they may fail. Also, it takes longer to retrieve.
+  
+#### Bulk Reports
+
 Current version allows retrieving two detailed bulk reports:
 
  - **Network Analytics feed**
@@ -39,6 +45,10 @@ Granularity of each report is controlled by values specified in the dimensions p
 
 **NOTE**: Any bulk report data is available in high detail but is limited to **30 day** history. If you do not specify since parameter within past 30 days, it will be overridden and minimum start date used instead. 
 It is recommended to leave the since parameter completely out. The extractor will load full history on the first run and each consecutive run only new data will be retrieved. To override this behaviour, please create new configuration.
+
+#### Standard Reports
+ Below is a list of supported Standard Reports:
+ - **[Network Analytics feed](https://wiki.appnexus.com/display/api/Clicktrackers+Feed)**
 ## Configuration
 ### Parameters
 

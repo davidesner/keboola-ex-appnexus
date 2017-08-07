@@ -22,13 +22,13 @@
 			"description": "AppNexus API Endpoint URL"
 		},
 		"networkAnalyticsPars": {
-			"propertyOrder": 5000,
+			"propertyOrder": 5800,
 			"title": "Network Analytics report parameters",
 			"type": [
 				"null",
 				"object"
 			],
-			"description": "Network Analytics report parameters",
+			"description": "Bulk Network Analytics report parameters",
 			"properties": {
 				"dimensions": {
 					"type": "array",
@@ -294,7 +294,7 @@
 				"null",
 				"object"
 			],
-			"description": "Click Tracker report parameters",
+			"description": "Bulk Click Tracker report parameters",
 			"properties": {
 				"dimensions": {
 					"type": "array",
@@ -818,7 +818,7 @@
 			}
 		},
 		"datasets": {
-			"propertyOrder": 5100,
+			"propertyOrder": 5200,
 			"type": "array",
 			"format": "checkbox",
 			"uniqueItems": true,
@@ -905,6 +905,7 @@
 		"endpointUrl",
 		"networkAnalyticsPars",
 		"clickTrackersPars",
+		"networkAnalyticsStandardPars",
 		"incremental",
 		"since",
 		"datasets"
