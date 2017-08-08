@@ -1,7 +1,9 @@
 package esnerda.keboola.ex.appnexus;
 
 import java.io.File;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -331,10 +333,10 @@ public class AppNexusRunner extends ComponentRunner {
 			handleException(e);
 		}
 		//temp fuj
-		/*if (lastState == null || lastState.getLastRun() == null) {			
-			return config.getSince() != null ? config.getSince().atStartOfDay() : null;
+		
+		if(lastState != null && lastState.getLastRun() != null) {
+			return LocalDate.now().minus(config.getReportDaysBack(), ChronoUnit.DAYS).atStartOfDay();
 		}
-		return lastState.getLastRun();*/
 		return config.getSince() != null ? config.getSince().atStartOfDay() : null;
 	}
 

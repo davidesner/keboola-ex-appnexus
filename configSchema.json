@@ -894,9 +894,16 @@
 		},
 		"since": {
 			"propertyOrder": 9000,
-			"title": "Changed since",
-			"description": "Loads data changed since. Date in format yyyy-mm-dd",
+			"title": "First load changed since",
+			"description": "On first run, loads data changed since this date. Date in format yyyy-mm-dd",
 			"type": "string"
+		},
+		"reportDaysBack": {
+			"propertyOrder": 9100,
+			"title": "Days back reporting interval",
+			"description": "Specifies number of days that will be retrieved each run",
+			"type": "number",
+			"minimum": 0
 		}
 	},
 	"required": [
@@ -908,6 +915,7 @@
 		"networkAnalyticsStandardPars",
 		"incremental",
 		"since",
-		"datasets"
+		"datasets",
+		"reportDaysBack"
 	]
 }

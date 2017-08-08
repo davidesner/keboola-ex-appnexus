@@ -18,7 +18,7 @@ import esnerda.keboola.components.configuration.ValidationException;
  * @author David Esner
  */
 public class AppNexusProperties extends IKBCParameters {
-	private final static String[] REQUIRED_FIELDS = { "userName", "password", "endpointUrl" };
+	private final static String[] REQUIRED_FIELDS = { "userName", "password", "endpointUrl","reportDaysBack"};
 	private final Map<String, Object> parametersMap;
 
 	/* auth */
@@ -47,6 +47,9 @@ public class AppNexusProperties extends IKBCParameters {
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	private LocalDate since;
 
+	@JsonProperty("reportDaysBack")
+	private Long reportDaysBack;
+
 	@JsonProperty("datasets")
 	private List<String> datasets;
 
@@ -60,7 +63,8 @@ public class AppNexusProperties extends IKBCParameters {
 			@JsonProperty("clickTrackersPars") ReportPars clickTrackersPars,
 			@JsonProperty("incremental") Boolean incremental, @JsonProperty("since") LocalDate since,
 			@JsonProperty("datasets") List<String> datasets, @JsonProperty("debug") Boolean debug,
-			@JsonProperty("networkAnalyticsStandardPars") ReportPars networkAnalyticsStandardPars) {
+			@JsonProperty("networkAnalyticsStandardPars") ReportPars networkAnalyticsStandardPars,
+			@JsonProperty("reportDaysBack") Long reportDaysBack) {
 
 		this.debug = Optional.ofNullable(debug).orElse(false);
 		this.userName = userName;
@@ -72,12 +76,14 @@ public class AppNexusProperties extends IKBCParameters {
 		this.incremental = Optional.ofNullable(incremental).orElse(true);
 		this.since = since;
 		this.datasets = datasets;
+		this.reportDaysBack = reportDaysBack;
 
 		// set param map
 		parametersMap = new HashMap<>();
 		parametersMap.put("userName", userName);
 		parametersMap.put("password", password);
 		parametersMap.put("endpointUrl", endpointUrl);
+		parametersMap.put("reportDaysBack", reportDaysBack);
 	}
 
 	@Override
@@ -168,6 +174,12 @@ public class AppNexusProperties extends IKBCParameters {
 	public ReportPars getNetworkAnalyticsStandardPars() {
 		return networkAnalyticsStandardPars;
 	}
+
+	public Long getReportDaysBack() {
+		return reportDaysBack;
+	}
+
+
 	
 
 }
