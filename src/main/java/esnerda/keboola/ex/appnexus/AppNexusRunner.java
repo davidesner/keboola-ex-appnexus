@@ -149,7 +149,7 @@ public class AppNexusRunner extends ComponentRunner {
 			columns.addAll(params.getDimensions());
 			columns.addAll(reportRq.getAllSupportedMetricColumns());
 			List<ReportRequestChunk<T>> reqs = builder.buildAdRequestChunks(sinceInst,
-					LocalDateTime.now(), new ArrayList(columns));
+					LocalDateTime.now(), new ArrayList(columns), !reportRq.isBulk());
 
 			for (ReportRequestChunk chunk : reqs) {
 				Map<String, ReportRequestWrapper> resJobs = new HashMap<>();

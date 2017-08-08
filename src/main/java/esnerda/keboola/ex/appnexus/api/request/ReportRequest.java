@@ -15,6 +15,20 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 @JsonInclude(Include.NON_NULL)
 public abstract class ReportRequest {
+	
+	
+	public static enum ReportInterval {
+		current_hour, last_hour, today, yesterday, last_48_hours, last_7_days, last_30_days, month_to_date, month_to_yesterday, last_2_days, quarter_to_date, last_month, lifetime;
+
+		public static boolean isValid(String test) {
+			for (ReportInterval c : ReportInterval.values()) {
+				if (c.name().equals(test)) {
+					return true;
+				}
+			}
+			return false;
+		}
+	}
 
 	@JsonIgnore
 	private static final String DATE_PATTERN = "yyyy-MM-dd HH:MM:ss";
@@ -29,6 +43,8 @@ public abstract class ReportRequest {
 	private LocalDateTime startDate;
 	@JsonProperty("end_date")
 	private LocalDateTime endDate;
+	@JsonProperty("report_interval")
+	private String reportInterval;
 	@JsonIgnore
 	private static final String DEFAULT_FORMAT ="csv";
 	
@@ -43,14 +59,21 @@ public abstract class ReportRequest {
 		this.endDate = endDate;
 		this.columns = columns;
 	}
+	public ReportRequest(String reportInterval , List<String> columns) {
+		super();
+		this.reportInterval = reportInterval;
+		this.columns = columns;
+	}
 
 	@JsonProperty("report_type")
 	public abstract String getReportType();
 
 	@JsonIgnore
 	public abstract List<String> getAllSupportedMetricColumns();
-	
+	@JsonIgnore
 	public abstract List<String> getAllSupportedColumns();
+	@JsonIgnore
+	public abstract boolean isBulk();
 
 	@JsonProperty("columns")
 	public List<String> getColumns() {
@@ -86,6 +109,11 @@ public abstract class ReportRequest {
 	@JsonProperty("format")
 	public String getFormat() {
 		return DEFAULT_FORMAT;
+	}
+
+	@JsonProperty("report_interval")
+	public String getReportInterval() {
+		return this.reportInterval;
 	}
 	@JsonIgnore
 	private String getLocalDateTimeString(LocalDateTime date) {

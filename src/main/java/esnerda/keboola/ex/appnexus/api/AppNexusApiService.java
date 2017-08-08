@@ -93,7 +93,7 @@ public class AppNexusApiService {
 	// wait between status check reqs
 	private static final long JOB_CHECK_WAIT_INTERVAL = 10000L;
 	// wait hour for jobs chunk to finish
-	private static final long WAIT_TIMEOUT = 900000L;
+	private static final long WAIT_TIMEOUT = 3600000L; // 1 hour
 	
 	private static final int RETRY_LIMIT = 5;
 
@@ -507,7 +507,7 @@ public class AppNexusApiService {
 				}
 			}
 		} while (flag && !timer.isTimedOut());
-		return new ArrayList(results);
+		return new ArrayList<Report>(results);
 	}
 
 	public List<File> downloadReports(List<Report> reports, String path) throws NexusApiException, Exception {

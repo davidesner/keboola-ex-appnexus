@@ -40,4 +40,9 @@ public class ClickTrackersFeedBulkRequest extends ReportRequest {
 		return Arrays.asList(METRIC_COLUMNS)	;
 	}
 
+	@Override
+	public boolean isBulk() {
+		return true;
+	}
+
 }

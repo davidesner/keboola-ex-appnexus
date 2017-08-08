@@ -14,7 +14,7 @@ public class Report {
     @JsonProperty("id")
     private String id;
     @JsonProperty("name")
-    private Object name;
+    private String name;
     @JsonProperty("created_on")
     private String createdOn;
     @JsonProperty("cache_hit")
@@ -22,17 +22,17 @@ public class Report {
     @JsonProperty("fact_cache_hit")
     private Boolean factCacheHit;
     @JsonProperty("fact_cache_error")
-    private Object factCacheError;
+    private String factCacheError;
     @JsonProperty("json_request")
     private String jsonRequest;
     @JsonProperty("header_info")
     private String headerInfo;
     @JsonProperty("row_count")
-    private Integer rowCount;
+    private Long rowCount;
     @JsonProperty("report_size")
-    private Integer reportSize;
+    private Long reportSize;
     @JsonProperty("user_id")
-    private Integer userId;
+    private Long userId;
     @JsonProperty("url")
     private String url;
     @JsonProperty("file")
@@ -49,12 +49,12 @@ public class Report {
     }
 
     @JsonProperty("name")
-    public Object getName() {
+    public String getName() {
         return name;
     }
 
     @JsonProperty("name")
-    public void setName(Object name) {
+    public void setName(String name) {
         this.name = name;
     }
 
@@ -89,12 +89,12 @@ public class Report {
     }
 
     @JsonProperty("fact_cache_error")
-    public Object getFactCacheError() {
+    public String getFactCacheError() {
         return factCacheError;
     }
 
     @JsonProperty("fact_cache_error")
-    public void setFactCacheError(Object factCacheError) {
+    public void setFactCacheError(String factCacheError) {
         this.factCacheError = factCacheError;
     }
 
@@ -119,32 +119,32 @@ public class Report {
     }
 
     @JsonProperty("row_count")
-    public Integer getRowCount() {
+    public Long getRowCount() {
         return rowCount;
     }
 
     @JsonProperty("row_count")
-    public void setRowCount(Integer rowCount) {
+    public void setRowCount(Long rowCount) {
         this.rowCount = rowCount;
     }
 
     @JsonProperty("report_size")
-    public Integer getReportSize() {
+    public Long getReportSize() {
         return reportSize;
     }
 
     @JsonProperty("report_size")
-    public void setReportSize(Integer reportSize) {
+    public void setReportSize(Long reportSize) {
         this.reportSize = reportSize;
     }
 
     @JsonProperty("user_id")
-    public Integer getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
     @JsonProperty("user_id")
-    public void setUserId(Integer userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 

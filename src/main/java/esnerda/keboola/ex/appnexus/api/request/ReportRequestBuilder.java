@@ -29,12 +29,19 @@ public class ReportRequestBuilder<T extends ReportRequest> {
 		this.type = type;
 	}
 
-	public List<ReportRequestChunk<T>> buildAdRequestChunks(LocalDateTime startTime, LocalDateTime endTime, List<String> columns) throws Exception {
-		LocalDateTime maxStartTime = endTime.minus(new Long(MAX_DAY_INTERVAL), ChronoUnit.DAYS);
+	public List<ReportRequestChunk<T>> buildAdRequestChunks(LocalDateTime startTime, LocalDateTime endTime, List<String> columns, boolean overrideToSingleChunk) throws Exception {
+		List<ReportRequestWrapper<T>> requests = new ArrayList<>();
+		
+		// override chunk creation for standard reports, otherwise continue
+		if (overrideToSingleChunk) {
+			requests.add(buildRequest(new TimeWindow(startTime, endTime), columns));
+			return buildChunkList(requests);
+		}
+		
 		if (startTime == null || startTime.isBefore(endTime.minus(new Long(MAX_DAY_INTERVAL), ChronoUnit.DAYS))) {
 			startTime = endTime.minus(new Long(MAX_DAY_INTERVAL), ChronoUnit.DAYS);
 		}
-		List<ReportRequestWrapper<T>> requests = new ArrayList<>();
+		
 		TimeWindowIterator tIt = new TimeWindowIterator(startTime, endTime);
 			//iterate over time windows
 			while (tIt.hasNext()) {

@@ -53,4 +53,9 @@ public class NetworkAnalyticsFeedBulkRequest extends ReportRequest {
 		return Arrays.asList(METRIC_COLUMNS);
 	}
 
+	@Override
+	public boolean isBulk() {
+		return true;
+	}
+
 }

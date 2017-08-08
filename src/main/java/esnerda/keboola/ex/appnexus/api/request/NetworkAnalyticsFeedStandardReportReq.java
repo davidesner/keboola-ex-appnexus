@@ -69,4 +69,9 @@ public class NetworkAnalyticsFeedStandardReportReq extends ReportRequest {
 		return Arrays.asList(METRIC_COLUMNS);
 	}
 
+	@Override
+	public boolean isBulk() {
+		return false;
+	}
+
 }
