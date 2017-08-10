@@ -505,6 +505,7 @@ public class AppNexusApiService {
 				} else {
 					flag = true;
 				}
+				SimpleTimer.reallySleep(10000);
 			}
 		} while (flag && !timer.isTimedOut());
 		return new ArrayList<Report>(results);

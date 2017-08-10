@@ -17,10 +17,14 @@ public class AppNexusState implements LastState {
 	@JsonProperty("unfinishedJobs")
 	private List unfinishedJobs;
 
-	public AppNexusState(LocalDateTime lastRun, List unfinishedJobs) {
+	@JsonProperty("lastConfig")
+	private AppNexusProperties lastConfig;
+
+	public AppNexusState(LocalDateTime lastRun, List unfinishedJobs, AppNexusProperties lastConfig) {
 		super();
 		this.lastRun = lastRun;
 		this.unfinishedJobs = unfinishedJobs;
+		this.lastConfig = lastConfig;
 	}
 
 	public AppNexusState() {
@@ -41,4 +45,10 @@ public class AppNexusState implements LastState {
 	public void setLastRun(LocalDateTime lastRun) {
 		this.lastRun = lastRun;
 	}
+
+	public AppNexusProperties getLastConfig() {
+		return lastConfig;
+	}
+	
+	
 }

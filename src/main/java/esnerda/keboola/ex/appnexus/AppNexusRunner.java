@@ -136,7 +136,7 @@ public class AppNexusRunner extends ComponentRunner {
 			handleException(new KBCException("Extraction failed!", 2, ex));
 		}
 
-		finalize(results, new AppNexusState(now, null));
+		finalize(results, new AppNexusState(now, null, config));
 		log.info("Extraction finished successfuly!");
 	}
 	
@@ -334,7 +334,7 @@ public class AppNexusRunner extends ComponentRunner {
 		}
 		//temp fuj
 		
-		if(lastState != null && lastState.getLastRun() != null) {
+		if(lastState != null && lastState.getLastConfig() != null && config.getSince().equals(lastState.getLastConfig().getSince())) {
 			return LocalDate.now().minus(config.getReportDaysBack(), ChronoUnit.DAYS).atStartOfDay();
 		}
 		return config.getSince() != null ? config.getSince().atStartOfDay() : null;
