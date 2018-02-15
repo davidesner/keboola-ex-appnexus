@@ -1,8 +1,10 @@
 package esnerda.keboola.ex.appnexus.config;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import esnerda.keboola.components.appstate.LastState;
@@ -17,14 +19,15 @@ public class AppNexusState implements LastState {
 	@JsonProperty("unfinishedJobs")
 	private List unfinishedJobs;
 
-	@JsonProperty("lastConfig")
-	private AppNexusProperties lastConfig;
+	@JsonProperty("since")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+	private LocalDate since;	
 
-	public AppNexusState(LocalDateTime lastRun, List unfinishedJobs, AppNexusProperties lastConfig) {
+	public AppNexusState(LocalDateTime lastRun, List unfinishedJobs, LocalDate since) {
 		super();
 		this.lastRun = lastRun;
 		this.unfinishedJobs = unfinishedJobs;
-		this.lastConfig = lastConfig;
+		this.since = since;
 	}
 
 	public AppNexusState() {
@@ -46,8 +49,8 @@ public class AppNexusState implements LastState {
 		this.lastRun = lastRun;
 	}
 
-	public AppNexusProperties getLastConfig() {
-		return lastConfig;
+	public LocalDate getSince() {
+		return since;
 	}
 	
 	
