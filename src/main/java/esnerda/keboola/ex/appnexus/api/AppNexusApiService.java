@@ -376,7 +376,7 @@ public class AppNexusApiService {
 				}
 			}
 			} catch(RatelimitExceededException e) {
-				//logger.warn(e.getMessage()
+				log.warn(e.getMessage());
 			}	
 			
 		} while (flag && retries <= RETRY_LIMIT);
