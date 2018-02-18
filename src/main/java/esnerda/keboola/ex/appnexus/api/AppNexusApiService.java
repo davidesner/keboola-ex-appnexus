@@ -37,6 +37,7 @@ import esnerda.keboola.ex.appnexus.api.entity.Publisher;
 import esnerda.keboola.ex.appnexus.api.entity.Report;
 import esnerda.keboola.ex.appnexus.api.entity.Segment;
 import esnerda.keboola.ex.appnexus.api.entity.Site;
+import esnerda.keboola.ex.appnexus.api.filters.ErrorResponseFilter;
 import esnerda.keboola.ex.appnexus.api.filters.ErrorResponseFilter.RatelimitExceededException;
 import esnerda.keboola.ex.appnexus.api.request.ReportRequestWrapper;
 import esnerda.keboola.ex.appnexus.api.response.ApiResponse;
@@ -375,8 +376,10 @@ public class AppNexusApiService {
 					apiClient.authenticate();
 				}
 			}
-			} catch(RatelimitExceededException e) {
-				log.warn(e.getMessage());
+			} catch(Exception e) {
+				if (!(e.getCause() instanceof ErrorResponseFilter.RatelimitExceededException)) {
+					log.warn(e.getMessage() + " Retrying nr. :" + retries);
+				}
 			}	
 			
 		} while (flag && retries <= RETRY_LIMIT);
@@ -385,7 +388,7 @@ public class AppNexusApiService {
 
 	private <T extends ApiResponse> void setClientRateLimits(ApiResponseWrapper<T> response) {
 		DbgInfo inf;
-		if ((inf = response.getResponse().getDbgInfo()) != null) {
+		if ((inf = response.getResponse().getDbgInfo()) != null && inf.getUserReadLimit() != null) {
 			apiClient.setRateLimitDetails(inf.getReadLimit(), inf.getReads(), inf.getReadLimitSeconds());
 		}
 	}

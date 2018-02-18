@@ -1,5 +1,7 @@
 package esnerda.keboola.ex.appnexus.api;
 
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
@@ -14,6 +16,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang3.StringUtils;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.logging.LoggingFeature;
@@ -32,6 +35,9 @@ public class AppNexusApiRestClient{
 
 	private static final String AUTH_PATH = "auth";
 	private static final String KEY_AUTH_HEADER = "Authorization";
+	private static final String KEY_RATE_LIMIT_H = "X-Rate-Limits";
+	
+	private static final int DEFAULT_READ_LIMIT_WINDOW_S = 60;
 	
 		private static final int CONNECTION_TIMEOUT = 300000;
 	private final String endpointUrl;
@@ -73,8 +79,8 @@ public class AppNexusApiRestClient{
 	public Response sendGetRequest(String path, Map<String, String> params) throws NexusApiException, Exception {
 		waitBeforeNext();
 		WebTarget paramTarget = setParams(buildWebTarget(path), params);		
-		Response resp =  prepareTargetBuilder(paramTarget).get();	
-		
+		Response resp =  prepareTargetBuilder(paramTarget).get();
+		setRatelimitFromHeader(resp.getHeaders().get(KEY_RATE_LIMIT_H));
 		return resp;
 	}
 
@@ -106,6 +112,23 @@ public class AppNexusApiRestClient{
 			}
 		}
 		return webTarget;
+	}
+
+	private void setRatelimitFromHeader(List<Object> headers) {
+		String values = (String) headers.get(0);
+		if (StringUtils.isEmpty(values)) {
+			// defaults
+			setRateLimitDetails(100, 0, 60);
+		} else {
+
+			Map<String, Integer> limValues = new LinkedHashMap<String, Integer>();
+			for (String keyValue : values.split(" *; *")) {
+				String[] pairs = keyValue.split(" *= *", 2);
+				limValues.put(pairs[0], pairs.length == 1 ? 0 : Integer.valueOf(pairs[1]));
+			}
+			setRateLimitDetails(limValues.get("lru"), limValues.get("cru"), DEFAULT_READ_LIMIT_WINDOW_S);
+		}
+
 	}
 	/* rate limitting */
 	public void setRateLimitDetails(Integer readLimit, Integer currReads, Integer readLimitSeconds ) {
