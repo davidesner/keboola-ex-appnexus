@@ -55,7 +55,9 @@ It is recommended to leave the since parameter completely out. The extractor wil
  - **User Name** – (REQ) Your AppNexus account user name
  - **Password**– (REQ) Your AppNexus account password
  - **Endpoint URL**– (REQ)  AppNexus API endpoint URL. Default is https://api.appnexus.com
- - **Changed since** – (OPT) Specify starting point of the time interval. If not specified, all available data is downloaded.
+ - **Changed since** – (OPT) Specify starting point of the time interval. If not specified, all available data is downloaded. If `Data since last run` is set to true, this value is used only first time the component is run, or whenever its changed.
+ - **Days back reporting interval** - Specifies number of days that will be retrieved each run after the first run is performed. If `Data since last run` is set to `true` this value is ignored and `Changed Since` is used instead.
+ - **Data since last run** - If set to `Yes` only data for past X days specified by `Days back reporting interval` are retrieved. Otherwise, `Changed Since` date is always used.
  - **Datasets** – list of datasets to download. Description of each dataset is provided in previous section.
  - **Network Analytics report parameters** – Specify dimensions which will be used in the report. The report data is sliced by specified dimensions accordingly. ***NOTE***: Pay attention when specifying the `IDs` parameter. Columns that can form **unique identifier** of a row must be specified correctly, otherwise the Incremental load will not work correctly and some data may be lost. If you are not sure, please leave this parameter out, perform Full load and specify the parameter afterwards.
  - **Click Tracker report parameters** – Specify dimensions and ID columns which will be used in the report. The report data is sliced by specified dimensions accordingly.
