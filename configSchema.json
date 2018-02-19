@@ -904,7 +904,25 @@
 			"description": "Specifies number of days that will be retrieved each run",
 			"type": "number",
 			"minimum": 0
+		},
+		"sinceLast": {
+			"propertyOrder": 11000,
+			"title": "Data since last run",
+			"description": "Determines whether the component should retrieve only data changed since the last run on each consecutive run.",
+			"type": "number",
+			"enum": [
+				0,
+				1
+			],
+			"default": 1,
+			"options": {
+				"enum_titles": [
+					"No",
+					"Yes"
+				]
+			}
 		}
+	}
 	},
 	"required": [
 		"userName",

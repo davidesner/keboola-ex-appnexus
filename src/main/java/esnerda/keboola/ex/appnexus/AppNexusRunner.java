@@ -334,7 +334,7 @@ public class AppNexusRunner extends ComponentRunner {
 		}
 		//temp fuj
 		
-		if(lastState != null && config.getSince().equals(lastState.getSince())) {
+		if(lastState != null && config.getSince().equals(lastState.getSince()) && config.getSinceLast()) {
 			return LocalDate.now().minus(config.getReportDaysBack(), ChronoUnit.DAYS).atStartOfDay();
 		}
 		return config.getSince() != null ? config.getSince().atStartOfDay() : null;

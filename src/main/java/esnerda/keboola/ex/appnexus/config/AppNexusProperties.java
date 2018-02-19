@@ -53,6 +53,9 @@ public class AppNexusProperties extends IKBCParameters {
 	@JsonProperty("datasets")
 	private List<String> datasets;
 
+	@JsonProperty("sinceLast")
+	private Boolean sinceLast;
+
 	@JsonProperty("debug")
 	private Boolean debug;
 
@@ -64,7 +67,8 @@ public class AppNexusProperties extends IKBCParameters {
 			@JsonProperty("incremental") Boolean incremental, @JsonProperty("since") LocalDate since,
 			@JsonProperty("datasets") List<String> datasets, @JsonProperty("debug") Boolean debug,
 			@JsonProperty("networkAnalyticsStandardPars") ReportPars networkAnalyticsStandardPars,
-			@JsonProperty("reportDaysBack") Long reportDaysBack) {
+			@JsonProperty("reportDaysBack") Long reportDaysBack,
+			@JsonProperty("sinceLast") Boolean sinceLast) {
 
 		this.debug = Optional.ofNullable(debug).orElse(false);
 		this.userName = userName;
@@ -77,6 +81,7 @@ public class AppNexusProperties extends IKBCParameters {
 		this.since = since;
 		this.datasets = datasets;
 		this.reportDaysBack = reportDaysBack;
+		this.sinceLast = Optional.ofNullable(sinceLast).orElse(true);
 
 		// set param map
 		parametersMap = new HashMap<>();
@@ -177,6 +182,10 @@ public class AppNexusProperties extends IKBCParameters {
 
 	public Long getReportDaysBack() {
 		return reportDaysBack;
+	}
+
+	public Boolean getSinceLast() {
+		return sinceLast;
 	}
 
 
