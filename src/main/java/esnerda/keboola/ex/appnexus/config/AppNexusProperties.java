@@ -39,6 +39,9 @@ public class AppNexusProperties extends IKBCParameters {
 	/* Standard Report params*/
 	@JsonProperty("networkAnalyticsStandardPars")
 	private ReportPars networkAnalyticsStandardPars;
+	
+	@JsonProperty("attributedConversionsStandardPars")
+	private AtrributedConversionReportPars attributedConversionsStandardPars;
 
 	@JsonProperty("incremental")
 	private Boolean incremental;
@@ -67,6 +70,7 @@ public class AppNexusProperties extends IKBCParameters {
 			@JsonProperty("incremental") Boolean incremental, @JsonProperty("since") LocalDate since,
 			@JsonProperty("datasets") List<String> datasets, @JsonProperty("debug") Boolean debug,
 			@JsonProperty("networkAnalyticsStandardPars") ReportPars networkAnalyticsStandardPars,
+			@JsonProperty("attributedConversionsStandardPars") AtrributedConversionReportPars attributedConversionsStandardPars,
 			@JsonProperty("reportDaysBack") Long reportDaysBack,
 			@JsonProperty("sinceLast") Boolean sinceLast) {
 
@@ -77,6 +81,7 @@ public class AppNexusProperties extends IKBCParameters {
 		this.networkAnalyticsPars = networkAnalyticsPars;
 		this.clickTrackersPars = clickTrackersPars;
 		this.networkAnalyticsStandardPars = networkAnalyticsStandardPars;
+		this.attributedConversionsStandardPars = attributedConversionsStandardPars;
 		this.incremental = Optional.ofNullable(incremental).orElse(true);
 		this.since = since;
 		this.datasets = datasets;
@@ -186,6 +191,10 @@ public class AppNexusProperties extends IKBCParameters {
 
 	public Boolean getSinceLast() {
 		return sinceLast;
+	}
+
+	public AtrributedConversionReportPars getAttributedConversionsStandardPars() {
+		return attributedConversionsStandardPars;
 	}
 
 

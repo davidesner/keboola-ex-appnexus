@@ -458,7 +458,7 @@ public class AppNexusApiService {
 		do {
 			retries++;
 			try {
-				Response resp = apiClient.sendPostRequest(KEY_REPORT, req);
+				Response resp = apiClient.sendPostRequest(KEY_REPORT, req, req.getReport().getParams());
 				result = resp.readEntity(new GenericType<ApiResponseWrapper<ReportJobResponse>>() {});
 				setClientRateLimits(result);
 				if (!result.getResponse().isSuccess()) {
