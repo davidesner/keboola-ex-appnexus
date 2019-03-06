@@ -34,6 +34,7 @@ import esnerda.keboola.ex.appnexus.api.entity.Label;
 import esnerda.keboola.ex.appnexus.api.entity.MediaType;
 import esnerda.keboola.ex.appnexus.api.entity.Report;
 import esnerda.keboola.ex.appnexus.api.entity.Segment;
+import esnerda.keboola.ex.appnexus.api.request.AttributedConversionStandardReportReq;
 import esnerda.keboola.ex.appnexus.api.request.ClickTrackersFeedBulkRequest;
 import esnerda.keboola.ex.appnexus.api.request.NetworkAnalyticsFeedBulkRequest;
 import esnerda.keboola.ex.appnexus.api.request.NetworkAnalyticsFeedStandardReportReq;
@@ -44,6 +45,7 @@ import esnerda.keboola.ex.appnexus.api.request.ReportRequestWrapper;
 import esnerda.keboola.ex.appnexus.config.AppNexusProperties;
 import esnerda.keboola.ex.appnexus.config.AppNexusProperties.Dataset;
 import esnerda.keboola.ex.appnexus.config.AppNexusState;
+import esnerda.keboola.ex.appnexus.config.AtrributedConversionReportPars;
 import esnerda.keboola.ex.appnexus.config.ReportPars;
 import esnerda.keboola.ex.appnexus.result.CampaignWriter;
 import esnerda.keboola.ex.appnexus.result.CreativeWriter;
@@ -89,8 +91,8 @@ public class AppNexusRunner extends ComponentRunner {
 		config = (AppNexusProperties) handler.getParameters();
 		log.info("Configuring environment...");
 		try {
-			AppNexusApiRestClient client = new AppNexusApiRestClient(config.getEndpointUrl(), config.getUserName(),
-					config.getPassword());
+			AppNexusApiRestClient client = new AppNexusApiRestClient(config.getEndpointUrl(),
+					config.getUserName(), config.getPassword());
 			apiService = new AppNexusApiService(client, log.getLogger());
 			initWriters();
 
@@ -100,14 +102,14 @@ public class AppNexusRunner extends ComponentRunner {
 	}
 
 	@Override
-	protected void run(){
+	protected void run() {
 
- 		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime now = LocalDateTime.now();
 
 		LocalDateTime since = getSinceDate();
 
 		log.info("Retrieving entities...");
-		if(since != null){
+		if (since != null) {
 			log.info("Loading results since " + since.toString());
 		}
 		List<ResultFileMetadata> results = new ArrayList<>();
@@ -117,19 +119,29 @@ public class AppNexusRunner extends ComponentRunner {
 			// NetworkAnalytics Report
 			if (config.getNetworkAnalyticsPars() != null) {
 				log.info("Retrieving Network Analytics reports...");
-				results.addAll(downloadReports(since, config.getNetworkAnalyticsPars(), new NetworkAnalyticsFeedBulkRequest()));
+				results.addAll(downloadReports(since, config.getNetworkAnalyticsPars(),
+						new NetworkAnalyticsFeedBulkRequest()));
 			}
 
 			// ClickTrackers Report
 			if (config.getClickTrackersPars() != null) {
 				log.info("Retrieving Click Trackers reports...");
-				results.addAll(downloadReports(since, config.getClickTrackersPars(), new ClickTrackersFeedBulkRequest()));
+				results.addAll(downloadReports(since, config.getClickTrackersPars(),
+						new ClickTrackersFeedBulkRequest()));
 			}
 
 			// NetworkAnalyticsStd Report
 			if (config.getNetworkAnalyticsStandardPars() != null) {
 				log.info("Retrieving Standard Network Analytics  reports...");
-				results.addAll(downloadReports(since, config.getNetworkAnalyticsStandardPars(), new NetworkAnalyticsFeedStandardReportReq()));
+				results.addAll(downloadReports(since, config.getNetworkAnalyticsStandardPars(),
+						new NetworkAnalyticsFeedStandardReportReq()));
+			}
+
+			// Attributed conversions std Report
+			if (config.getAttributedConversionsStandardPars() != null) {
+				log.info("Retrieving Attributed Conversions reports...");
+				results.addAll(getAttributedConversions(since,
+						config.getAttributedConversionsStandardPars()));
 			}
 
 		} catch (Exception ex) {
@@ -139,8 +151,30 @@ public class AppNexusRunner extends ComponentRunner {
 		finalize(results, new AppNexusState(now, null, config.getSince()));
 		log.info("Extraction finished successfuly!");
 	}
-	
-	private <T extends ReportRequest> List<ResultFileMetadata> downloadReports(LocalDateTime since, ReportPars params, T reportRq) throws Exception {
+
+	private List<ResultFileMetadata> getAttributedConversions(LocalDateTime since,
+			AtrributedConversionReportPars reportPars) throws NexusApiException, Exception {
+		List<String> advertisers = reportPars.getAdvertisers();
+		if (advertisers.isEmpty()) {
+			List<Advertiser> advertisers_res = apiService.getAllAdvertisers(since);
+			for (Advertiser a : advertisers_res) {
+				advertisers.add(a.getId().toString());
+			}
+		}
+
+		List<ResultFileMetadata> results = new ArrayList<>();
+		for (String aid : advertisers) {
+			log.info("Getting Attributed Conversions report for adevertiser " + aid);
+			results.addAll(downloadReports(since, config.getAttributedConversionsStandardPars(),
+					new AttributedConversionStandardReportReq(aid)));
+		}
+
+		return results;
+
+	}
+
+	private <T extends ReportRequest> List<ResultFileMetadata> downloadReports(LocalDateTime since,
+			ReportPars params, T reportRq) throws Exception {
 		LocalDateTime sinceInst = since != null ? since : null;
 		List<File> resultReports = new ArrayList<>();
 		try {
@@ -151,26 +185,31 @@ public class AppNexusRunner extends ComponentRunner {
 			columns.addAll(params.getDimensions());
 			columns.addAll(reportRq.getAllSupportedMetricColumns());
 			List<ReportRequestChunk<T>> reqs = builder.buildAdRequestChunks(sinceInst,
-					LocalDateTime.now(), new ArrayList(columns), !reportRq.isBulk());
+					LocalDateTime.now(), new ArrayList(columns), reportRq.getParams(),
+					!reportRq.isBulk());
 
 			for (ReportRequestChunk chunk : reqs) {
 				Map<String, ReportRequestWrapper> resJobs = new HashMap<>();
 				resJobs.putAll(apiService.submitReportRequests(chunk.getRequestList()));
-				List<Report> reports = apiService.waitForAllJobsToFinish(new ArrayList<String>(resJobs.keySet()));
+				List<Report> reports = apiService
+						.waitForAllJobsToFinish(new ArrayList<String>(resJobs.keySet()));
 
 				if (reports.size() != chunk.getRequestList().size()) {
-					log.error(reports.size() + " reports out of " + chunk.getRequestList().size() + " were downloaded. "
+					log.error(reports.size() + " reports out of " + chunk.getRequestList().size()
+							+ " were downloaded. "
 							+ (chunk.getRequestList().size() - reports.size())
 							+ " timed out and will be collected on next run.", null);
 				}
-				resultReports.addAll(apiService.downloadReports(reports,
-						handler.getOutputTablesPath() + File.separator + reportRq.getReportType() + ".csv"));
+				resultReports
+						.addAll(apiService.downloadReports(reports, handler.getOutputTablesPath()
+								+ File.separator + reportRq.getReportType() + ".csv"));
 			}
 		} catch (NexusApiException e) {
-			log.error("Failed to retrieve " + reportRq.getReportType() + " report! " + e.getMessage() + " errorId: " + e.getErrorId(),	e);
+			log.error("Failed to retrieve " + reportRq.getReportType() + " report! "
+					+ e.getMessage() + " errorId: " + e.getErrorId(), e);
 		}
 		return processReportFiles(resultReports, params.getIds().toArray(new String[0]));
-		
+
 	}
 
 	/**
@@ -180,7 +219,8 @@ public class AppNexusRunner extends ComponentRunner {
 	 * @return
 	 * @throws Exception
 	 */
-	private List<ResultFileMetadata> processReportFiles(List<File> reports, String [] ids) throws Exception {
+	private List<ResultFileMetadata> processReportFiles(List<File> reports, String[] ids)
+			throws Exception {
 
 		if (reports.isEmpty()) {
 			return Collections.EMPTY_LIST;
@@ -191,19 +231,21 @@ public class AppNexusRunner extends ComponentRunner {
 		for (File r : reports) {
 			CsvUtil.removeHeaderFromCsv(r);
 		}
-		//in case some files did not contain any data
+		// in case some files did not contain any data
 		CsvUtil.deleteEmptyFiles(reports);
-		return Collections.singletonList(
-				new ResultFileMetadata(new File(reports.get(0).getParentFile().getAbsolutePath()), ids, headerCols));
+		return Collections.singletonList(new ResultFileMetadata(
+				new File(reports.get(0).getParentFile().getAbsolutePath()), ids, headerCols));
 	}
 
-	private List<ResultFileMetadata> writeAllEntities(LocalDateTime since) throws NexusApiException, Exception {
+	private List<ResultFileMetadata> writeAllEntities(LocalDateTime since)
+			throws NexusApiException, Exception {
 		List<ResultFileMetadata> result = new ArrayList<>();
 		try {
 			if (config.getDatasets().contains(Dataset.Advertiser.name())) {
 				log.info("Retrieving advetisers...");
 				advertiserWriter.initWriter(handler.getOutputTablesPath(), Advertiser.class);
-				result.addAll(advertiserWriter.writeAndRetrieveResuts(apiService.getAllAdvertisers(since)));
+				result.addAll(advertiserWriter
+						.writeAndRetrieveResuts(apiService.getAllAdvertisers(since)));
 			}
 			if (config.getDatasets().contains(Dataset.Brand.name())) {
 				log.info("Retrieving brands...");
@@ -213,12 +255,14 @@ public class AppNexusRunner extends ComponentRunner {
 			if (config.getDatasets().contains(Dataset.Campaign.name())) {
 				log.info("Retrieving campaigns...");
 				campaignWriter.initWriter(handler.getOutputTablesPath(), null);
-				result.addAll(campaignWriter.writeAndRetrieveResuts(apiService.getAllCampaigns(since)));
+				result.addAll(
+						campaignWriter.writeAndRetrieveResuts(apiService.getAllCampaigns(since)));
 			}
 			if (config.getDatasets().contains(Dataset.LineItem.name())) {
 				log.info("Retrieving line items...");
 				lineItemWriter.initWriter(handler.getOutputTablesPath(), null);
-				result.addAll(lineItemWriter.writeAndRetrieveResuts(apiService.getAllLineItems(since)));
+				result.addAll(
+						lineItemWriter.writeAndRetrieveResuts(apiService.getAllLineItems(since)));
 			}
 			if (config.getDatasets().contains(Dataset.Category.name())) {
 				log.info("Retrieving categories...");
@@ -233,27 +277,32 @@ public class AppNexusRunner extends ComponentRunner {
 			if (config.getDatasets().contains(Dataset.InsertionOrder.name())) {
 				log.info("Retrieving insertion orders...");
 				iOrderWriter.initWriter(handler.getOutputTablesPath(), InsertionOrder.class);
-				result.addAll(iOrderWriter.writeAndRetrieveResuts(apiService.getAllInsertionOrders(since)));
+				result.addAll(iOrderWriter
+						.writeAndRetrieveResuts(apiService.getAllInsertionOrders(since)));
 			}
 			if (config.getDatasets().contains(Dataset.MediaType.name())) {
 				log.info("Retrieving media types...");
 				mediaTypeWriter.initWriter(handler.getOutputTablesPath(), MediaType.class);
-				result.addAll(mediaTypeWriter.writeAndRetrieveResuts(apiService.getAllMediaTypes(since)));
+				result.addAll(
+						mediaTypeWriter.writeAndRetrieveResuts(apiService.getAllMediaTypes(since)));
 			}
 			if (config.getDatasets().contains(Dataset.Placement.name())) {
 				log.info("Retrieving placements...");
 				placemetnWriter.initWriter(handler.getOutputTablesPath(), null);
-				result.addAll(placemetnWriter.writeAndRetrieveResuts(apiService.getAllPlacements(since)));
+				result.addAll(
+						placemetnWriter.writeAndRetrieveResuts(apiService.getAllPlacements(since)));
 			}
 			if (config.getDatasets().contains(Dataset.Publisher.name())) {
 				log.info("Retrieving publishers...");
 				publisherWriter.initWriter(handler.getOutputTablesPath(), null);
-				result.addAll(publisherWriter.writeAndRetrieveResuts(apiService.getAllPublishers(since)));
+				result.addAll(
+						publisherWriter.writeAndRetrieveResuts(apiService.getAllPublishers(since)));
 			}
 			if (config.getDatasets().contains(Dataset.Segment.name())) {
 				log.info("Retrieving segments...");
 				segmentWriter.initWriter(handler.getOutputTablesPath(), Segment.class);
-				result.addAll(segmentWriter.writeAndRetrieveResuts(apiService.getAllSegments(since)));
+				result.addAll(
+						segmentWriter.writeAndRetrieveResuts(apiService.getAllSegments(since)));
 			}
 			if (config.getDatasets().contains(Dataset.Site.name())) {
 				log.info("Retrieving sites...");
@@ -266,7 +315,8 @@ public class AppNexusRunner extends ComponentRunner {
 				result.addAll(labelWriter.writeAndRetrieveResuts(apiService.getAllLabels(since)));
 			}
 		} catch (NexusApiException e) {
-			log.error("Failed to retrieve entities! " + e.getMessage() + " errorId: " + e.getErrorId(),	e);
+			log.error("Failed to retrieve entities! " + e.getMessage() + " errorId: "
+					+ e.getErrorId(), e);
 			if (!e.isTerminal()) {
 				System.exit(1);
 			}
@@ -274,14 +324,14 @@ public class AppNexusRunner extends ComponentRunner {
 		return result;
 	}
 
-	/* internal methods*/	
+	/* internal methods */
 
 	@Override
 	protected KBCConfigurationEnvHandler initHandler(String[] args, KBCLogger log) {
 		KBCConfigurationEnvHandler handler = null;
 		try {
-			handler = ConfigHandlerBuilder.create(AppNexusProperties.class).setStateFileType(AppNexusState.class)
-					.build();
+			handler = ConfigHandlerBuilder.create(AppNexusProperties.class)
+					.setStateFileType(AppNexusState.class).build();
 			// process the configuration
 			handler.processConfigFile(args);
 		} catch (KBCException ex) {
@@ -322,7 +372,8 @@ public class AppNexusRunner extends ComponentRunner {
 
 	@Override
 	protected ManifestFile generateManifestFile(ResultFileMetadata result) throws KBCException {
-		return ManifestFile.Builder.buildDefaultFromResult(result, null, config.getIncremental()).setColumns(result.getColumns()).build();
+		return ManifestFile.Builder.buildDefaultFromResult(result, null, config.getIncremental())
+				.setColumns(result.getColumns()).build();
 	}
 
 	private LocalDateTime getSinceDate() {
@@ -332,10 +383,12 @@ public class AppNexusRunner extends ComponentRunner {
 		} catch (KBCException e) {
 			handleException(e);
 		}
-		//temp fuj
-		
-		if(lastState != null && config.getSince().equals(lastState.getSince()) && config.getSinceLast()) {
-			return LocalDate.now().minus(config.getReportDaysBack(), ChronoUnit.DAYS).atStartOfDay();
+		// temp fuj
+
+		if (lastState != null && config.getSince().equals(lastState.getSince())
+				&& config.getSinceLast()) {
+			return LocalDate.now().minus(config.getReportDaysBack(), ChronoUnit.DAYS)
+					.atStartOfDay();
 		}
 		return config.getSince() != null ? config.getSince().atStartOfDay() : null;
 	}

@@ -1,5 +1,6 @@
 package esnerda.keboola.ex.appnexus.api;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,42 +32,49 @@ import esnerda.keboola.ex.appnexus.util.SimpleTimer;
 /**
  * @author David Esner
  */
-public class AppNexusApiRestClient{
+public class AppNexusApiRestClient {
 
 	private static final String AUTH_PATH = "auth";
 	private static final String KEY_AUTH_HEADER = "Authorization";
 	private static final String KEY_RATE_LIMIT_H = "X-Rate-Limits";
-	
+
 	private static final int DEFAULT_READ_LIMIT_WINDOW_S = 60;
-	
-		private static final int CONNECTION_TIMEOUT = 300000;
+
+	private static final int CONNECTION_TIMEOUT = 300000;
 	private final String endpointUrl;
 	private final String userName;
 	private final Client client;
 	private final String password;
 	private Integer reqRemaining = null;
 	private Integer currentReqLimit = null;
-	private  long currentRateLimitWindowLength;
-	
+	private long currentRateLimitWindowLength;
+
 	private String authToken;
-	
-	public AppNexusApiRestClient (String endpointUrl, String username, String password) {
+
+	public AppNexusApiRestClient(String endpointUrl, String username, String password) {
 		this.endpointUrl = endpointUrl;
 		this.userName = username;
 		this.password = password;
-		this.client = ClientBuilder.newClient(
-				new ClientConfig().register(new LoggingFeature(Logger.getAnonymousLogger(), Verbosity.HEADERS_ONLY))
-						.register(ErrorResponseFilter.class).register(new LoggingFeature(Logger.getGlobal(), LoggingFeature.Verbosity.PAYLOAD_ANY)));
+		this.client = ClientBuilder.newClient(new ClientConfig()
+				.register(new LoggingFeature(Logger.getAnonymousLogger(), Verbosity.HEADERS_ONLY))
+				.register(ErrorResponseFilter.class).register(new LoggingFeature(Logger.getGlobal(),
+						LoggingFeature.Verbosity.PAYLOAD_ANY)));
 		this.client.property(ClientProperties.CONNECT_TIMEOUT, CONNECTION_TIMEOUT);
 	}
 
 	public void authenticate() throws NexusApiException, Exception {
-		Response resp = sendPostRequest(AUTH_PATH, new AuthRequestWrapper(userName, password));
-		ApiResponseWrapper<AuthResponse> authResp = resp.readEntity(new GenericType<ApiResponseWrapper<AuthResponse>>() {});
+		Response resp = sendPostRequest(AUTH_PATH, new AuthRequestWrapper(userName, password),
+				Collections.emptyMap());
+		ApiResponseWrapper<AuthResponse> authResp = resp
+				.readEntity(new GenericType<ApiResponseWrapper<AuthResponse>>() {
+				});
 		if (authResp.getResponse().getErrorId() == null) {
 			authToken = authResp.getResponse().getToken();
 		} else {
-			throw new NexusApiException("Authentication failed! Invalid endpoint? Reason: " + authResp.getResponse().getError(), authResp.getResponse().getErrorId(), true);
+			throw new NexusApiException(
+					"Authentication failed! Invalid endpoint? Reason: "
+							+ authResp.getResponse().getError(),
+					authResp.getResponse().getErrorId(), true);
 		}
 	}
 
@@ -76,23 +84,25 @@ public class AppNexusApiRestClient{
 		}
 	}
 
-	public Response sendGetRequest(String path, Map<String, String> params) throws NexusApiException, Exception {
+	public Response sendGetRequest(String path, Map<String, String> params)
+			throws NexusApiException, Exception {
 		waitBeforeNext();
-		WebTarget paramTarget = setParams(buildWebTarget(path), params);		
-		Response resp =  prepareTargetBuilder(paramTarget).get();
+		WebTarget paramTarget = setParams(buildWebTarget(path), params);
+		Response resp = prepareTargetBuilder(paramTarget).get();
 		setRatelimitFromHeader(resp.getHeaders().get(KEY_RATE_LIMIT_H));
 		return resp;
 	}
 
-	public Response sendPostRequest(String path, Object entity) throws Exception {
+	public Response sendPostRequest(String path, Object entity, Map<String, String> params)
+			throws Exception {
 		waitBeforeNext();
-		Response response = prepareTargetBuilder(buildWebTarget(path))
+		WebTarget paramTarget = setParams(buildWebTarget(path), params);
+		Response response = prepareTargetBuilder(paramTarget)
 				.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-				.post(Entity.entity(entity, MediaType.APPLICATION_JSON));	
-		
+				.post(Entity.entity(entity, MediaType.APPLICATION_JSON));
+
 		return response;
 	}
-
 
 	protected Builder prepareTargetBuilder(WebTarget target) {
 		Builder b = target.request(MediaType.APPLICATION_JSON);
@@ -102,9 +112,10 @@ public class AppNexusApiRestClient{
 		return b;
 	}
 
-	protected WebTarget buildWebTarget(String path){
+	protected WebTarget buildWebTarget(String path) {
 		return client.target(endpointUrl).path(path);
 	}
+
 	protected WebTarget setParams(WebTarget webTarget, Map<String, String> params) {
 		if (params != null) {
 			for (Entry<String, String> param : params.entrySet()) {
@@ -126,18 +137,21 @@ public class AppNexusApiRestClient{
 				String[] pairs = keyValue.split(" *= *", 2);
 				limValues.put(pairs[0], pairs.length == 1 ? 0 : Integer.valueOf(pairs[1]));
 			}
-			setRateLimitDetails(limValues.get("lru"), limValues.get("cru"), DEFAULT_READ_LIMIT_WINDOW_S);
+			setRateLimitDetails(limValues.get("lru"), limValues.get("cru"),
+					DEFAULT_READ_LIMIT_WINDOW_S);
 		}
 
 	}
+
 	/* rate limitting */
-	public void setRateLimitDetails(Integer readLimit, Integer currReads, Integer readLimitSeconds ) {
+	public void setRateLimitDetails(Integer readLimit, Integer currReads,
+			Integer readLimitSeconds) {
 		if (readLimit == null || currReads == null || readLimitSeconds == null) {
 			return;
 		}
 		this.currentReqLimit = readLimit;
 		this.reqRemaining = currentReqLimit - currReads;
-		this.currentRateLimitWindowLength = readLimitSeconds*1000L;
+		this.currentRateLimitWindowLength = readLimitSeconds * 1000L;
 	}
 
 	protected void waitBeforeNext() {
@@ -156,12 +170,11 @@ public class AppNexusApiRestClient{
 
 			SimpleTimer.reallySleep(interval);
 		} catch (RuntimeException ex) {
-			Logger.getLogger(getClass().getName()).warning("Thread sleep failed " + ex.getMessage());
+			Logger.getLogger(getClass().getName())
+					.warning("Thread sleep failed " + ex.getMessage());
 
 		}
 	}
-
-	
 
 	public static class NexusApiException extends Exception {
 
@@ -171,22 +184,23 @@ public class AppNexusApiRestClient{
 
 		private String errorId;
 		private boolean authenticationError;
-		
+
 		public NexusApiException(String message, String errorId) {
-			
+
 			super(message);
 			this.errorId = errorId;
 		}
 
 		public NexusApiException(String message, String errorId, boolean authenticationError) {
-			
+
 			super(message);
 			this.errorId = errorId;
 		}
 
 		public boolean isRecoverable() {
-			return ErrorID.NOAUTH_EXPIRED.name().equals(errorId) || ErrorID.NOAUTH_EXPIRED.name().equals(errorId) ||
-					ErrorID.LIMIT.name().equals(errorId);
+			return ErrorID.NOAUTH_EXPIRED.name().equals(errorId)
+					|| ErrorID.NOAUTH_EXPIRED.name().equals(errorId)
+					|| ErrorID.LIMIT.name().equals(errorId);
 		}
 
 		public boolean isTerminal() {
@@ -196,7 +210,7 @@ public class AppNexusApiRestClient{
 		public String getErrorId() {
 			return errorId;
 		}
-		
+
 	}
 
 }

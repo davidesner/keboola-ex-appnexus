@@ -5,8 +5,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
@@ -29,12 +31,12 @@ public class ReportRequestBuilder<T extends ReportRequest> {
 		this.type = type;
 	}
 
-	public List<ReportRequestChunk<T>> buildAdRequestChunks(LocalDateTime startTime, LocalDateTime endTime, List<String> columns, boolean overrideToSingleChunk) throws Exception {
+	public List<ReportRequestChunk<T>> buildAdRequestChunks(LocalDateTime startTime, LocalDateTime endTime, List<String> columns, Map<String, String> params, boolean overrideToSingleChunk) throws Exception {
 		List<ReportRequestWrapper<T>> requests = new ArrayList<>();
 		
 		// override chunk creation for standard reports, otherwise continue
 		if (overrideToSingleChunk) {
-			requests.add(buildRequest(new TimeWindow(startTime, endTime), columns));
+			requests.add(buildRequest(new TimeWindow(startTime, endTime), columns, params));
 			return buildChunkList(requests);
 		}
 		
@@ -46,7 +48,7 @@ public class ReportRequestBuilder<T extends ReportRequest> {
 			//iterate over time windows
 			while (tIt.hasNext()) {
 				TimeWindow tw = tIt.next();
-				requests.add(buildRequest(tw, columns));
+				requests.add(buildRequest(tw, columns, params));
 			}
 
 		return buildChunkList(requests);
@@ -75,9 +77,9 @@ public class ReportRequestBuilder<T extends ReportRequest> {
 	 * @throws InvocationTargetException 
 	 * @throws IllegalArgumentException 
 	 */
-	private ReportRequestWrapper<T> buildRequest(TimeWindow window, List<String> columns) throws Exception {
-		 Constructor<T> constructorStr = type.getConstructor(LocalDateTime.class, LocalDateTime.class, List.class);
-		T req =  (T) constructorStr.newInstance(window.getStartTime(),window.getEndTime(),columns);
+	private ReportRequestWrapper<T> buildRequest(TimeWindow window, List<String> columns, Map<String, String> params) throws Exception {
+		 Constructor<T> constructorStr = type.getConstructor(LocalDateTime.class, LocalDateTime.class, List.class, HashMap.class);
+		T req =  (T) constructorStr.newInstance(window.getStartTime(),window.getEndTime(),columns, params);
 		return (ReportRequestWrapper<T>) new ReportRequestWrapper<T>(req);
 	}
 
