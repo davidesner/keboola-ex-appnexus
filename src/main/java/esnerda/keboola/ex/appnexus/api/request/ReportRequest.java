@@ -3,6 +3,7 @@ package esnerda.keboola.ex.appnexus.api.request;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -15,8 +16,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 @JsonInclude(Include.NON_NULL)
 public abstract class ReportRequest {
-	
-	
+
 	public static enum ReportInterval {
 		current_hour, last_hour, today, yesterday, last_48_hours, last_7_days, last_30_days, month_to_date, month_to_yesterday, last_2_days, quarter_to_date, last_month, lifetime;
 
@@ -46,20 +46,23 @@ public abstract class ReportRequest {
 	@JsonProperty("report_interval")
 	private String reportInterval;
 	@JsonIgnore
-	private static final String DEFAULT_FORMAT ="csv";
-	
-	
+	private Map<String, String> params;
+	@JsonIgnore
+	private static final String DEFAULT_FORMAT = "csv";
 
 	public ReportRequest() {
 	}
 
-	public ReportRequest(LocalDateTime startDate, LocalDateTime endDate, List<String> columns) {
+	public ReportRequest(LocalDateTime startDate, LocalDateTime endDate, List<String> columns,
+			Map<String, String> params) {
 		super();
 		this.startDate = startDate;
 		this.endDate = endDate;
 		this.columns = columns;
+		this.params = params;
 	}
-	public ReportRequest(String reportInterval , List<String> columns) {
+
+	public ReportRequest(String reportInterval, List<String> columns) {
 		super();
 		this.reportInterval = reportInterval;
 		this.columns = columns;
@@ -70,8 +73,10 @@ public abstract class ReportRequest {
 
 	@JsonIgnore
 	public abstract List<String> getAllSupportedMetricColumns();
+
 	@JsonIgnore
 	public abstract List<String> getAllSupportedColumns();
+
 	@JsonIgnore
 	public abstract boolean isBulk();
 
@@ -79,12 +84,12 @@ public abstract class ReportRequest {
 	public List<String> getColumns() {
 		return this.columns;
 	}
-	
+
 	public void setColumns(List<String> columns) {
 		this.columns = columns;
 	}
 
-	@JsonProperty("start_date")	
+	@JsonProperty("start_date")
 	public String getStartDate() {
 		return getLocalDateTimeString(startDate);
 	}
@@ -115,11 +120,21 @@ public abstract class ReportRequest {
 	public String getReportInterval() {
 		return this.reportInterval;
 	}
+
 	@JsonIgnore
 	private String getLocalDateTimeString(LocalDateTime date) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_PATTERN);
 		return formatter.format(date);
 	}
 
+	@JsonIgnore
+	public Map<String, String> getParams() {
+		return params;
+	}
+
+	@JsonIgnore
+	public Map<String, String> setParams(Map<String, String> params) {
+		return this.params = params;
+	}
 
 }
