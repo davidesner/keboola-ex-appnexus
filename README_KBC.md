@@ -49,6 +49,7 @@ It is recommended to leave the since parameter completely out. The extractor wil
 #### Standard Reports
  Below is a list of supported Standard Reports:
  - **[Network Analytics](https://wiki.appnexus.com/display/api/Network+Analytics)**
+ - **[Attributed Conversions](https://wiki.appnexus.com/display/api/Attributed+Conversions)**
 ## Configuration
 ### Parameters
 
