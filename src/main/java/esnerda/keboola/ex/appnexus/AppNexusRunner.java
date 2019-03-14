@@ -377,20 +377,14 @@ public class AppNexusRunner extends ComponentRunner {
 	}
 
 	private LocalDateTime getSinceDate() {
-		AppNexusState lastState = null;
-		try {
-			lastState = (AppNexusState) handler.getStateFile();
-		} catch (KBCException e) {
-			handleException(e);
-		}
-		// temp fuj
 
-		if (lastState != null && config.getSince().equals(lastState.getSince())
-				&& config.getSinceLast()) {
-			return LocalDate.now().minus(config.getReportDaysBack(), ChronoUnit.DAYS)
-					.atStartOfDay();
+		LocalDateTime dt = null;
+		if (config.getReportDaysBack() != null && config.getReportDaysBack() > 0) {
+			dt = LocalDate.now().minus(config.getReportDaysBack(), ChronoUnit.DAYS).atStartOfDay();
+		} else if (config.getSince() != null) {
+			dt = config.getSince().atStartOfDay();
 		}
-		return config.getSince() != null ? config.getSince().atStartOfDay() : null;
+		return dt;
 	}
 
 }
