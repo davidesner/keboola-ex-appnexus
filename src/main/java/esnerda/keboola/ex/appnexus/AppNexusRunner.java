@@ -156,7 +156,7 @@ public class AppNexusRunner extends ComponentRunner {
 			AtrributedConversionReportPars reportPars) throws NexusApiException, Exception {
 		List<String> advertisers = reportPars.getAdvertisers();
 		if (advertisers.isEmpty()) {
-			List<Advertiser> advertisers_res = apiService.getAllAdvertisers(since);
+			List<Advertiser> advertisers_res = apiService.getAllAdvertisers(null);
 			for (Advertiser a : advertisers_res) {
 				advertisers.add(a.getId().toString());
 			}
