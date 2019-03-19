@@ -7,8 +7,8 @@ RUN apt-get update -y
 RUN apt-get install -y git-core
 
 # set switch that enables correct JVM memory allocation in containers
-ENV JAVA_OPTS="-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
-ENV MAVEN_OPTS="-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
+ENV JAVA_OPTS="-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -Xmx700m"
+ENV MAVEN_OPTS="-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -Xmx700m"
 
  WORKDIR /home
 RUN git clone https://github.com/davidesner/keboola-ex-appnexus.git ./  

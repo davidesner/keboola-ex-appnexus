@@ -239,7 +239,7 @@ public class AppNexusRunner extends ComponentRunner {
 
 	private List<ResultFileMetadata> writeAllEntities(LocalDateTime since)
 			throws NexusApiException, Exception {
-		since = null;
+		// since = null;
 		List<ResultFileMetadata> result = new ArrayList<>();
 		try {
 			if (config.getDatasets().contains(Dataset.Advertiser.name())) {
