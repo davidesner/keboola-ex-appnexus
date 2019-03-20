@@ -374,7 +374,7 @@ public class AppNexusRunner extends ComponentRunner {
 	@Override
 	protected ManifestFile generateManifestFile(ResultFileMetadata result) throws KBCException {
 		return ManifestFile.Builder.buildDefaultFromResult(result, null, config.getIncremental())
-				.setColumns(result.getColumns()).build();
+				.setColumns(result.getColumns()).setPrimaryKey(result.getIdColums()).build();
 	}
 
 	private LocalDateTime getSinceDate() {
