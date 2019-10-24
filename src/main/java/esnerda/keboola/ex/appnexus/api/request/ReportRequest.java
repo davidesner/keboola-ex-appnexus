@@ -62,10 +62,11 @@ public abstract class ReportRequest {
 		this.params = params;
 	}
 
-	public ReportRequest(String reportInterval, List<String> columns) {
+	public ReportRequest(String reportInterval, List<String> columns, Map<String, String> params) {
 		super();
 		this.reportInterval = reportInterval;
 		this.columns = columns;
+		this.params = params;
 	}
 
 	@JsonProperty("report_type")
@@ -91,6 +92,9 @@ public abstract class ReportRequest {
 
 	@JsonProperty("start_date")
 	public String getStartDate() {
+		if (this.startDate == null) {
+			return null;
+		}
 		return getLocalDateTimeString(startDate);
 	}
 
@@ -102,6 +106,9 @@ public abstract class ReportRequest {
 
 	@JsonProperty("end_date")
 	public String getEndDate() {
+		if (this.endDate == null) {
+			return null;
+		}
 		return getLocalDateTimeString(endDate);
 	}
 
