@@ -2,6 +2,7 @@ package esnerda.keboola.ex.appnexus.api.request;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 
@@ -67,6 +68,39 @@ public abstract class ReportRequest {
 		this.reportInterval = reportInterval;
 		this.columns = columns;
 		this.params = params;
+	}
+
+	@JsonIgnore
+	public static String buildReportIntervalString(LocalDateTime startDate, LocalDateTime endDate) {
+		int nrDays = (int) ChronoUnit.DAYS.between(startDate, endDate);
+		String report_interval = ReportRequest.ReportInterval.lifetime.name();
+		if (nrDays <= 1) {
+			report_interval = ReportRequest.ReportInterval.today.name();
+		}
+		if (nrDays > 1 && nrDays <= 2) {
+			report_interval = ReportRequest.ReportInterval.yesterday.name();
+		}
+
+		if (nrDays > 1 && nrDays <= 2) {
+			report_interval = ReportRequest.ReportInterval.yesterday.name();
+		}
+		if (nrDays > 2 && nrDays <= 3) {
+			report_interval = ReportRequest.ReportInterval.last_2_days.name();
+		}
+
+		if (nrDays > 3 && nrDays <= 7) {
+			report_interval = ReportRequest.ReportInterval.last_7_days.name();
+		}
+
+		if (nrDays > 7 && nrDays <= 30) {
+			report_interval = ReportRequest.ReportInterval.last_30_days.name();
+		}
+
+		if (nrDays > 30 && nrDays <= 120) {
+			report_interval = ReportRequest.ReportInterval.quarter_to_date.name();
+		}
+		return report_interval;
+
 	}
 
 	@JsonProperty("report_type")

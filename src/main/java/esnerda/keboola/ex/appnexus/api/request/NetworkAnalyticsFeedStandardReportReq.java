@@ -1,7 +1,6 @@
 package esnerda.keboola.ex.appnexus.api.request;
 
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -16,36 +15,7 @@ public class NetworkAnalyticsFeedStandardReportReq extends ReportRequest {
 
 	public NetworkAnalyticsFeedStandardReportReq(LocalDateTime startDate, LocalDateTime endDate,
 			List<String> columns, HashMap<String, String> params) {
-		super(buildReportInterval(startDate, endDate), columns, params);
-	}
-
-	private static String buildReportInterval(LocalDateTime startDate, LocalDateTime endDate) {
-		int nrDays = (int) ChronoUnit.DAYS.between(startDate, endDate);
-		String report_interval = ReportRequest.ReportInterval.lifetime.name();
-		if (nrDays <= 1) {
-			report_interval = ReportRequest.ReportInterval.today.name();
-		}
-		if (nrDays > 1 && nrDays <= 2) {
-			report_interval = ReportRequest.ReportInterval.yesterday.name();
-		}
-
-		if (nrDays > 1 && nrDays <= 2) {
-			report_interval = ReportRequest.ReportInterval.yesterday.name();
-		}
-		if (nrDays > 2 && nrDays <= 3) {
-			report_interval = ReportRequest.ReportInterval.last_2_days.name();
-		}
-
-		if (nrDays > 3 && nrDays <= 7) {
-			report_interval = ReportRequest.ReportInterval.last_7_days.name();
-		}
-
-		if (nrDays > 7 && nrDays <= 30) {
-			report_interval = ReportRequest.ReportInterval.last_30_days.name();
-		}
-
-		return report_interval;
-
+		super(buildReportIntervalString(startDate, endDate), columns, params);
 	}
 
 	private static final String REPORT_TYPE = "network_analytics";
