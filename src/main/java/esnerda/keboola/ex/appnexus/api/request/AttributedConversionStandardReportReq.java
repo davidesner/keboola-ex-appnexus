@@ -29,7 +29,7 @@ public class AttributedConversionStandardReportReq extends ReportRequest {
 
 	public AttributedConversionStandardReportReq(LocalDateTime startDate, LocalDateTime endDate,
 			List<String> columns, HashMap<String, String> params) {
-		super(buildReportIntervalString(startDate, endDate), columns, params);
+		super(startDate, endDate, columns, params);
 	}
 
 	private static final String REPORT_TYPE = "attributed_conversions";
