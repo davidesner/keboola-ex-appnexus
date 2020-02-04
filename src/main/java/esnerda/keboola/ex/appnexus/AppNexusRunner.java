@@ -207,6 +207,7 @@ public class AppNexusRunner extends ComponentRunner {
 		} catch (NexusApiException e) {
 			log.error("Failed to retrieve " + reportRq.getReportType() + " report! "
 					+ e.getMessage() + " errorId: " + e.getErrorId(), e);
+			System.exit(1);
 		}
 		return processReportFiles(resultReports, params.getIds().toArray(new String[0]));
 
