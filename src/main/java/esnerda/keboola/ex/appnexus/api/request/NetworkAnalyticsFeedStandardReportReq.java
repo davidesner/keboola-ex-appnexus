@@ -43,14 +43,12 @@ public class NetworkAnalyticsFeedStandardReportReq extends ReportRequest {
 	public static final String[] METRIC_COLUMNS = new String[] { "imps", "imp_requests",
 			"imps_blank", "imps_psa", "imps_psa_error", "imps_default_error", "imps_default_bidder",
 			"imps_kept", "imps_resold", "imps_rtb", "external_impression", "clicks",
-			"click_thru_pct", "external_click", "cost", "cost_including_fees", "revenue",
-			"revenue_including_fees", "booked_revenue", "booked_revenue_adv_curr",
-			"reseller_revenue", "profit", "profit_including_fees", "commissions", "cpm",
-			"cpm_including_fees", "post_click_convs", "post_click_revenue", "post_view_convs",
-			"post_view_revenue", "total_convs", "convs_per_mm", "convs_rate", "ctr", "rpm",
-			"rpm_including_fees", "total_network_rpm", "total_publisher_rpm", "sold_network_rpm",
-			"sold_publisher_rpm", "media_cost_pub_curr", "ppm", "ppm_including_fees",
-			"serving_fees", "imps_viewed", "view_measured_imps", "view_rate",
+			"click_thru_pct", "external_click", "cost", "revenue", "booked_revenue",
+			"booked_revenue_adv_curr", "reseller_revenue", "profit", "commissions", "cpm",
+			"post_click_convs", "post_click_revenue", "post_view_convs", "post_view_revenue",
+			"total_convs", "convs_per_mm", "convs_rate", "ctr", "rpm", "total_network_rpm",
+			"total_publisher_rpm", "sold_network_rpm", "sold_publisher_rpm", "media_cost_pub_curr",
+			"ppm", "serving_fees", "imps_viewed", "view_measured_imps", "view_rate",
 			"view_measurement_rate", "cpvm", "data_costs", "revenue_buying_currency",
 			"revenue_selling_currency", "booked_revenue_buying_currency",
 			"booked_revenue_selling_currency", "reseller_revenue_buying_currency",
@@ -62,7 +60,10 @@ public class NetworkAnalyticsFeedStandardReportReq extends ReportRequest {
 			"sold_network_rpm_buying_currency", "sold_network_rpm_selling_currency",
 			"commissions_buying_currency", "commissions_selling_currency",
 			"serving_fees_buying_currency", "serving_fees_selling_currency",
-			"data_costs_buying_currency", "data_costs_selling_currency" };
+			"data_costs_buying_currency", "data_costs_selling_currency", "partner_fees",
+			"total_cost", "total_cost_ecpm", "total_cost_ecpc", "total_cost_ecpa", "network_profit",
+			"network_profit_ecpm", "network_profit_ecpc", "network_profit_ecpa",
+			"network_profit_margin", "profit_ecpm", "profit_ecpc", "profit_ecpa", "profit_margin" };
 
 	@Override
 	public String getReportType() {
