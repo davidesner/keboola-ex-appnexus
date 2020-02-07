@@ -96,9 +96,6 @@ public abstract class ReportRequest {
 			report_interval = ReportRequest.ReportInterval.last_30_days.name();
 		}
 
-		if (nrDays > 30 && nrDays <= 120) {
-			report_interval = ReportRequest.ReportInterval.quarter_to_date.name();
-		}
 		return report_interval;
 
 	}

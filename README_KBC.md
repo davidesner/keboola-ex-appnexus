@@ -50,6 +50,18 @@ It is recommended to leave the since parameter completely out. The extractor wil
  Below is a list of supported Standard Reports:
  - **[Network Analytics](https://wiki.appnexus.com/display/api/Network+Analytics)**
  - **[Attributed Conversions](https://wiki.appnexus.com/display/api/Attributed+Conversions)**
+ 
+**Important Note**: 
+
+For standard reports it is only allowed to specify the time interval in predefined report ranges. In order to keep compatibility with the bulk reports that allow specifying custom date range, the range you specify is translated as follows:
+
+- nrDays > 1 && nrDays <= 2 => `yesterday`
+- nrDays > 2 && nrDays <= 3)  `last_2_days`
+- nrDays > 3 && nrDays <= 7 => `last_7_days`
+- nrDays > 7 && nrDays <= 30 => `last_30_days`
+- > 30 days => `lifetime`
+
+
 ## Configuration
 ### Parameters
 
