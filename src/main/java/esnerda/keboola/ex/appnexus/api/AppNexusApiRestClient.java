@@ -126,7 +126,7 @@ public class AppNexusApiRestClient {
 	}
 
 	private void setRatelimitFromHeader(List<Object> headers) {
-		String values = (String) headers.get(0);
+		String values = headers==null ? "" : (String) headers.get(0);
 		if (StringUtils.isEmpty(values)) {
 			// defaults
 			setRateLimitDetails(100, 0, 60);
