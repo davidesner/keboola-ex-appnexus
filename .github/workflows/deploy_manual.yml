@@ -13,10 +13,12 @@ jobs:
       KBC_DEVELOPERPORTAL_APP: ${{ secrets.KBC_DEVELOPERPORTAL_APP }}
     steps:
       - uses: actions/checkout@v2
-      - name: Set env
+      - name: Get tag
         run: |
-          echo ${{ steps.vars.outputs.tag }}
+          echo ::set-output name=SOURCE_TAG::${GITHUB_REF#refs/tags/}
       - name: Deploy
+        env:
+          GITHUB_TAG: ${{ steps.branch_name.outputs.SOURCE_TAG }}
         run: |
           chmod +x ./deploy.sh
       - name: Run scripts
