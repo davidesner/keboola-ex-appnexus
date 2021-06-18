@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-export GITHUB_TAG = ${{ github.event.release.tag_name }}
+
 # Obtain the component repository and log in
 docker pull quay.io/keboola/developer-portal-cli-v2:latest
 export REPOSITORY=`docker run --rm  \
