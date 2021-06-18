@@ -1,5 +1,5 @@
 
-name: Deploy
+name: Deploy Manual
 on:
   workflow_dispatch:
 jobs:
