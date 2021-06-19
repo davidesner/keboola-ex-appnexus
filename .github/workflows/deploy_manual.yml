@@ -14,7 +14,8 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v1
-
+    - name: Set tag env
+      run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
     - name: Build image
       run: docker build -t component .
 
@@ -25,7 +26,7 @@ jobs:
         app_id: ${{ secrets.app_id }}
         username: ${{ secrets.developer_portal_user }}
         password: ${{ secrets.developer_portal_password }}
-        tag: ${{ github.ref }}
+        tag: ${{ env.RELEASE_VERSION }}
         push_latest: true
         source_image: component
 
