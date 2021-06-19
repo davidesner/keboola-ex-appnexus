@@ -4,9 +4,6 @@ on:
   push:
     tags:
       - '[0-9]*.[0-9]*.[0-9]*'
-    branches:
-      - main
-      - master
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -18,6 +15,8 @@ jobs:
       KBC_DEVELOPERPORTAL_APP: ${{ secrets.KBC_DEVELOPERPORTAL_APP }}
     steps:
       - uses: actions/checkout@v2
+      - name: Build image
+        run: docker build -t ${APP_IMAGE} .
       - name: Set tag env
         run: echo "GITHUB_TAG=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
       - name: Deploy
