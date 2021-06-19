@@ -1,8 +1,9 @@
 
 name: Deploy
 on:
-  release:
-    types: [ created ]
+  push:
+    tags:
+      - '[0-9]*.[0-9]*.[0-9]*'
     branches:
       - main
       - master
@@ -17,9 +18,12 @@ jobs:
       KBC_DEVELOPERPORTAL_APP: ${{ secrets.KBC_DEVELOPERPORTAL_APP }}
     steps:
       - uses: actions/checkout@v2
+      - name: Set tag env
+        run: echo "GITHUB_TAG=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
       - name: Deploy
         run: |
           chmod +x ./deploy.sh
       - name: Run scripts
         run: |
           ./deploy.sh
+          
