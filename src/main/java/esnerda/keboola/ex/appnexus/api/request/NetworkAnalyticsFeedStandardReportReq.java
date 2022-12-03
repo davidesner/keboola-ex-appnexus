@@ -49,7 +49,7 @@ public class NetworkAnalyticsFeedStandardReportReq extends ReportRequest {
 			"total_convs", "convs_per_mm", "convs_rate", "ctr", "rpm", "total_network_rpm",
 			"total_publisher_rpm", "sold_network_rpm", "sold_publisher_rpm", "media_cost_pub_curr",
 			"serving_fees", "imps_viewed", "view_measured_imps", "view_rate",
-			"view_measurement_rate", "cpvm", "data_costs", "revenue_buying_currency",
+			"view_measurement_rate", "cpvm", "total_feature_costs","total_segment_data_costs", "revenue_buying_currency",
 			"revenue_selling_currency", "booked_revenue_buying_currency",
 			"booked_revenue_selling_currency", "reseller_revenue_buying_currency",
 			"reseller_revenue_selling_currency", "cost_buying_currency", "cost_selling_currency",
