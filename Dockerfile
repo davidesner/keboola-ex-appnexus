@@ -10,8 +10,8 @@ RUN apt-get install -y git-core
 ENV JAVA_OPTS="-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -Xmx700m"
 ENV MAVEN_OPTS="-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -Xmx700m"
 
- WORKDIR /home
-RUN git clone https://github.com/davidesner/keboola-ex-appnexus.git ./  
+WORKDIR /home
+COPY . ./
 RUN mvn compile
 
 ENTRYPOINT mvn -q exec:java -Dexec.args=/data  
