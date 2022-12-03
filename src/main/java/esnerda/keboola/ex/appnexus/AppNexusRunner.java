@@ -184,7 +184,6 @@ public class AppNexusRunner extends ComponentRunner {
 			Set<String> columns = new HashSet<>();
 			columns.addAll(params.getDimensions());
 			columns.addAll(reportRq.getAllSupportedMetricColumns());
-			log.info(columns.toString());
 			List<ReportRequestChunk<T>> reqs = builder.buildAdRequestChunks(sinceInst,
 					LocalDateTime.now(), new ArrayList(columns), reportRq.getParams(),
 					!reportRq.isBulk());
